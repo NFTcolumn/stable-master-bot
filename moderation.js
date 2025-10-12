@@ -84,8 +84,8 @@ class ModerationSystem {
     const username = msg.from.username || msg.from.first_name || 'Unknown';
     const messageText = msg.text || msg.caption || '';
     
-    // Skip if message is empty or from admin
-    if (!messageText || await this.isAdmin(chatId, userId)) {
+    // Skip if message is empty or from admin or VIP
+    if (!messageText || await this.isAdmin(chatId, userId) || this.isVIP(username)) {
       return false;
     }
 
@@ -307,6 +307,12 @@ Continued promotion after warnings is not tolerated.
     } catch (error) {
       return false;
     }
+  }
+
+  isVIP(username) {
+    // VIP users who are never moderated - the bosses!
+    const vipUsers = ['nftmansa', 'nftiapia'];
+    return vipUsers.includes(username?.toLowerCase());
   }
 
   async unmuteUser(chatId, userId) {
