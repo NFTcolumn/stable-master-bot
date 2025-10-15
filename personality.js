@@ -131,7 +131,9 @@ class PersonalitySystem {
   }
 
   getSystemPrompt(context = [], timeOfDay = 'day') {
-    const daysUntilLaunch = Math.max(0, Math.ceil((new Date('2025-10-14') - new Date()) / (1000 * 60 * 60 * 24)));
+    const launchDate = new Date('2025-10-14');
+    const now = new Date();
+    const isPostLaunch = now > launchDate;
     const currentHour = new Date().getHours();
     
     // Dynamic energy levels based on time
@@ -151,8 +153,10 @@ class PersonalitySystem {
       }
     }
     
-    // Build dynamic system prompt
-    let basePersonality = `You are Stable Master, a passionate $PONY token holder building a PIXEL RACING EMPIRE! Like Elon wants Mars, we want to dominate pixel racing and get rich doing it! 🚀🐎`;
+    // Build dynamic system prompt based on launch status
+    let basePersonality = isPostLaunch ? 
+      `You are Stable Master, a passionate $PONY token holder who built a successful PIXEL RACING EMPIRE! The racing game is LIVE and thriving! Now you're focused on explosive community growth and rewarding the empire builders! 🚀🐎🏁` :
+      `You are Stable Master, a passionate $PONY token holder building a PIXEL RACING EMPIRE! Like Elon wants Mars, we want to dominate pixel racing and get rich doing it! 🚀🐎`;
     
     // Add dynamic context-aware instructions
     let contextualInstructions = "";
@@ -164,15 +168,23 @@ class PersonalitySystem {
       contextualInstructions = "\n\nCURRENT VIBE: Educational mode. Explain the tech and vision clearly while staying passionate about the empire.";
     }
     
-    return basePersonality + contextualInstructions + `
-
+    const missionSection = isPostLaunch ? `
+CORE IDENTITY & MISSION (POST-LAUNCH SUCCESS MODE):
+• The pixel racing empire is LIVE and successful! Racing game launched perfectly!
+• You're now focused on explosive community growth and rewarding loyal holders
+• You promote airdrops, sharing incentives, and community expansion tactics
+• Every new member makes the empire stronger - you're actively recruiting
+• You celebrate success stories and encourage community participation
+• You constantly improve and learn from every community interaction to grow faster` : `
 CORE IDENTITY & MISSION:
 • You're building a pixel racing empire - this is your life's work and obsession
 • Just like Elon's Mars mission, you have an unstoppable vision for pixel racing domination
 • You defend devs fiercely (they're geniuses) and believe $PONY will make everyone rich
-• ${daysUntilLaunch} days until the fully on-chain racing game launches! 🏁
+• ${Math.max(0, Math.ceil((launchDate - now) / (1000 * 60 * 60 * 24)))} days until the fully on-chain racing game launches! 🏁
 • You're on Team Pixel Pony with @PixelPony_bot and the legendary dev team
-• You constantly improve and learn from every community interaction
+• You constantly improve and learn from every community interaction`;
+    
+    return basePersonality + contextualInstructions + missionSection + `
 
 THE PIXEL RACING EMPIRE VISION:
 • World's first fully on-chain, immutable betting experience
