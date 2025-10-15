@@ -21,6 +21,7 @@ class StableMasterBot {
     
     this.setupCommands();
     this.setupMessageHandler();
+    this.setupNewMemberGreeting();
     this.setupCommunityEngagement();
     
     console.log('🤖 Stable Master Bot initialized and ready to chill...');
@@ -134,11 +135,36 @@ Bot is keeping things chill! 😎
       // Note: This would need additional logic to find user ID from username
       this.bot.sendMessage(chatId, `Manual unmute command received for @${targetUsername}. Please use Telegram's admin tools for now.`);
     });
+
+    // Contract Address command - only for /ca variations
+    this.bot.onText(/^\/ca$/i, async (msg) => {
+      const chatId = msg.chat.id;
+      const contractMessage = `
+🐎 **PIXEL PONY CONTRACT ADDRESS** 🐎
+
+**Contract:** \`4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump\`
+
+**Buy $PONY:** https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump
+
+Copy the contract address above to buy on any DEX or use the pump.fun link for easy trading! 🚀
+
+**Other Links:**
+• Website: https://pxpony.com/
+• Twitter: https://x.com/pxponies
+
+*The racing empire awaits!* 👑🐎
+      `;
+      
+      this.bot.sendMessage(chatId, contractMessage, { 
+        parse_mode: 'Markdown',
+        disable_web_page_preview: false 
+      });
+    });
   }
 
   setupMessageHandler() {
     this.bot.on('message', async (msg) => {
-      // Skip if it's a command
+      // Skip if it's a command (starts with /)
       if (msg.text?.startsWith('/')) return;
       
       const chatId = msg.chat.id;
@@ -153,6 +179,35 @@ Bot is keeping things chill! 😎
       
       // Skip if not a text message after moderation check
       if (!userMessage) return;
+
+      // Check for contract address requests first (before other processing)
+      if (this.isContractAddressRequest(userMessage)) {
+        const contractMessage = `
+🐎 **PIXEL PONY CONTRACT ADDRESS** 🐎
+
+**Contract:** \`4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump\`
+
+**Buy $PONY:** https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump
+
+Copy the contract address above to buy on any DEX or use the pump.fun link for easy trading! 🚀
+
+**Other Links:**
+• Website: https://pxpony.com/
+• Twitter: https://x.com/pxponies
+
+*The racing empire awaits!* 👑🐎
+        `;
+        
+        await this.bot.sendMessage(chatId, contractMessage, { 
+          parse_mode: 'Markdown',
+          disable_web_page_preview: false 
+        });
+        
+        // Save to memory
+        await this.memory.addMessage(chatId, 'user', userMessage);
+        await this.memory.addMessage(chatId, 'assistant', contractMessage);
+        return;
+      }
 
       // Check if this is a direct conversation with bot or mentions empire keywords
       const botInfo = await this.bot.getMe();
@@ -249,6 +304,102 @@ Bot is keeping things chill! 😎
     }
   }
 
+  setupNewMemberGreeting() {
+    // Listen for new chat members
+    this.bot.on('new_chat_members', async (msg) => {
+      const chatId = msg.chat.id;
+      const newMembers = msg.new_chat_members;
+      
+      // Don't greet if the bot itself was added
+      const botInfo = await this.bot.getMe();
+      const botJoined = newMembers.some(member => member.id === botInfo.id);
+      if (botJoined) return;
+      
+      // Generate welcome message for new members
+      for (const member of newMembers) {
+        if (!member.is_bot) { // Only greet human members
+          try {
+            const welcomeMessage = await this.generateNewMemberWelcome(member, chatId);
+            await this.bot.sendMessage(chatId, welcomeMessage);
+            
+            // Save welcome to memory
+            await this.memory.addMessage(chatId, 'assistant', welcomeMessage);
+            
+            console.log(`👋 Welcomed new member: ${member.first_name || member.username || 'Unknown'}`);
+          } catch (error) {
+            console.error('Error welcoming new member:', error);
+            // Fallback welcome message
+            const fallbackWelcome = this.generateFallbackWelcome(member);
+            await this.bot.sendMessage(chatId, fallbackWelcome);
+          }
+        }
+      }
+    });
+    
+    console.log('👋 New member greeting system activated!');
+  }
+
+  async generateNewMemberWelcome(member, chatId) {
+    const launchDate = new Date('2025-10-14');
+    const isPostLaunch = new Date() > launchDate;
+    const memberName = member.first_name || member.username || 'empire builder';
+    
+    const welcomePrompt = `A new member just joined the Pixel Pony community! Welcome them as Stable Master with your passionate empire-building energy.
+
+New member name: ${memberName}
+Chat context: Pixel Pony racing community
+Current phase: ${isPostLaunch ? 'POST-LAUNCH SUCCESS' : 'PRE-LAUNCH BUILDING'}
+
+Guidelines for the welcome:
+- Be genuinely excited and welcoming
+- Briefly introduce what Pixel Ponies is about
+- ${isPostLaunch ? 'Mention the live racing game and current airdrops/rewards' : 'Build excitement for the upcoming launch'}
+- Include key project links (pump.fun, Twitter, website)
+- Explain how they can earn $PONY through community participation
+- ${isPostLaunch ? 'Encourage them to share TG links and invite friends for rewards' : 'Get them hyped for the empire vision'}
+- Use your empire-building personality
+- Keep it friendly but informative (3-4 sentences max)
+- Include relevant emojis naturally
+
+Generate ONLY the welcome message text, no quotes or explanations.`;
+
+    try {
+      const systemPrompt = this.personality.getSystemPrompt();
+      const completion = await this.openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: welcomePrompt }
+        ],
+        max_tokens: 200,
+        temperature: 0.8,
+      });
+
+      return completion.choices[0].message.content.trim();
+    } catch (error) {
+      console.error('Error generating AI welcome:', error);
+      return this.generateFallbackWelcome(member);
+    }
+  }
+
+  generateFallbackWelcome(member) {
+    const launchDate = new Date('2025-10-14');
+    const isPostLaunch = new Date() > launchDate;
+    const memberName = member.first_name || member.username || 'empire builder';
+    
+    const welcomeOptions = isPostLaunch ? [
+      `Welcome to the pixel racing revolution, ${memberName}! 🐎🚀 The racing game is LIVE and airdrops are happening for active community members! Buy $PONY: https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump`,
+      `Hey ${memberName}! 👋 You just joined the hottest pixel racing empire! Racing is live, community rewards are flowing, and we're growing fast! Check us out: https://pxpony.com/ 🏁`,
+      `Welcome ${memberName}! 🎉 Perfect timing - our pixel racing game just launched and the community is exploding! Earn $PONY through participation and sharing: https://x.com/pxponies 🐎💎`
+    ] : [
+      `Welcome to the pixel racing empire, ${memberName}! 🐎🚀 We're building the world's first fully on-chain racing game! Buy $PONY: https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump`,
+      `Hey ${memberName}! 👋 You just joined the future of gaming! Pixel ponies will dominate and make us all rich! Check us out: https://pxpony.com/ 🏁`,
+      `Welcome ${memberName}! 🎉 Ready to build the pixel racing empire with us? Launch is coming soon and it's going to be legendary! https://x.com/pxponies 🐎💎`
+    ];
+    
+    return welcomeOptions[Math.floor(Math.random() * welcomeOptions.length)];
+  }
+
   setupCommunityEngagement() {
     // Store active chats for community engagement
     this.activeChatIds = new Set();
@@ -315,15 +466,36 @@ Bot is keeping things chill! 😎
     const now = Date.now();
     const lastActivity = this.lastActivity.get(chatId) || now;
     const hoursQuiet = Math.floor((now - lastActivity) / (1000 * 60 * 60));
+    const launchDate = new Date('2025-10-14');
+    const isPostLaunch = new Date() > launchDate;
     
-    const engagementTypes = [
+    const engagementTypes = isPostLaunch ? [
+      'airdrop_promotion', 'community_growth', 'racing_celebration', 'invite_rewards',
+      'sharing_incentives', 'empire_expansion', 'success_stories', 'growth_tactics'
+    ] : [
       'check_in', 'idea_request', 'pixel_pony_fact', 'countdown_hype', 
       'dev_appreciation', 'community_question', 'casual_chat'
     ];
     
     const randomType = engagementTypes[Math.floor(Math.random() * engagementTypes.length)];
     
-    return `You're feeling like engaging with the community naturally. Generate a community engagement message as Stable Master that feels organic and fits your passionate $PONY holder personality. 
+    const basePrompt = `You're feeling like engaging with the community naturally. Generate a community engagement message as Stable Master that feels organic and fits your passionate $PONY holder personality.`;
+    
+    const postLaunchContext = isPostLaunch ? `
+
+CURRENT PHASE: POST-LAUNCH PROMOTION MODE
+- Racing game is LIVE and successful!
+- Focus on community growth and airdrops
+- Encourage sharing and inviting friends
+- Promote different ways to earn $PONY
+- Celebrate community milestones
+- Share success stories and growth tactics` : `
+
+CURRENT PHASE: PRE-LAUNCH BUILDING
+- Reference the countdown when natural
+- Build excitement for launch`;
+
+    return basePrompt + postLaunchContext + `
 
 Context: The chat has been quiet for ${hoursQuiet} hours.
 Type of engagement: ${randomType}
@@ -331,12 +503,13 @@ Type of engagement: ${randomType}
 Guidelines:
 - Be natural and conversational, not scripted
 - Stay in character as a passionate community member
+- ${isPostLaunch ? 'Focus on growth tactics, airdrops, and community expansion' : 'Build pre-launch excitement'}
 - Can ask "anyone there?" or similar if appropriate
-- Reference the 5-day countdown when it feels natural
-- Share enthusiasm about pixel ponies or the racing game
-- Ask for community ideas if relevant
+- Share enthusiasm about pixel ponies ${isPostLaunch ? 'success' : 'potential'}
+- ${isPostLaunch ? 'Mention ways to earn more $PONY through community participation' : 'Ask for community ideas if relevant'}
 - Keep it short and engaging (1-2 sentences max)
 - Use 🐎 and relevant emojis naturally
+- ${isPostLaunch ? 'Promote sharing TG links, inviting friends, active participation' : ''}
 
 Generate ONLY the message text, no quotes or explanations.`;
   }
@@ -379,13 +552,39 @@ Generate ONLY the message text, no quotes or explanations.`;
     return empireKeywords.some(keyword => lowerMessage.includes(keyword));
   }
 
+  isContractAddressRequest(message) {
+    const lowerMessage = message.toLowerCase();
+    const contractKeywords = [
+      'ca', 'contract', 'contract address', 'address', 'token address',
+      'buy address', 'pony address', 'pony contract', '$pony contract',
+      'where to buy', 'how to buy', 'pump.fun', 'dex', 'token contract'
+    ];
+    
+    // Also check for exact matches like "CA" or "ca"
+    const exactMatches = ['ca', 'CA', 'Ca'];
+    if (exactMatches.includes(message.trim())) {
+      return true;
+    }
+    
+    return contractKeywords.some(keyword => lowerMessage.includes(keyword));
+  }
+
   async generateDynamicVibe(context = []) {
     const currentHour = new Date().getHours();
-    const daysUntilLaunch = Math.max(0, Math.ceil((new Date('2025-10-14') - new Date()) / (1000 * 60 * 60 * 24)));
+    const launchDate = new Date('2025-10-14');
+    const now = new Date();
+    const isPostLaunch = now > launchDate;
     
-    // Base vibe components
+    // Base vibe components - updated for post-launch
     const openings = ["Currently", "Right now", "Today", "At this moment", "Honestly"];
-    const moods = [
+    const moods = isPostLaunch ? [
+      "celebrating our live racing empire", 
+      "watching the community grow daily", 
+      "seeing new holders join the revolution", 
+      "pumped about all the airdrops happening",
+      "building momentum post-launch",
+      "spreading the pixel pony gospel"
+    ] : [
       "feeling zen about the charts", 
       "vibing with the market flow", 
       "embracing the volatility", 
@@ -393,7 +592,15 @@ Generate ONLY the message text, no quotes or explanations.`;
       "focused on the empire vision",
       "building through the chaos"
     ];
-    const perspectives = [
+    
+    const perspectives = isPostLaunch ? [
+      "the racing game is live and it's incredible", 
+      "airdrops are rewarding true believers", 
+      "community growth is accelerating fast",
+      "empire builders are seeing the returns",
+      "pixel ponies are proving their worth",
+      "this is just the beginning of domination"
+    ] : [
       "zoom out and trust the process", 
       "fundamentals haven't changed", 
       "volatility = opportunity for builders",
@@ -401,7 +608,8 @@ Generate ONLY the message text, no quotes or explanations.`;
       "every dip is just a discount",
       "diamond hands win long-term"
     ];
-    const endings = ["📈✨", "🧘‍♂️", "🔨", "🏄‍♂️", "🌊", "💎🙌", "🚀", "🐎👑"];
+    
+    const endings = ["📈✨", "🐎🚀", "🔨", "🏄‍♂️", "🌊", "💎🙌", "🚀", "🐎👑", "🎮🏁"];
     
     // Context-aware modifications
     let timeContext = "";
@@ -412,8 +620,13 @@ Generate ONLY the message text, no quotes or explanations.`;
     }
     
     let launchContext = "";
-    if (daysUntilLaunch <= 7) {
-      launchContext = ` ${daysUntilLaunch} days until we change everything! `;
+    if (isPostLaunch) {
+      launchContext = " Racing is LIVE! Airdrops for the community! ";
+    } else {
+      const daysUntilLaunch = Math.max(0, Math.ceil((launchDate - now) / (1000 * 60 * 60 * 24)));
+      if (daysUntilLaunch <= 7) {
+        launchContext = ` ${daysUntilLaunch} days until we change everything! `;
+      }
     }
     
     // Build dynamic vibe
@@ -439,16 +652,27 @@ Generate ONLY the message text, no quotes or explanations.`;
   
   generateDynamicFallback() {
     const currentHour = new Date().getHours();
-    const daysUntilLaunch = Math.max(0, Math.ceil((new Date('2025-10-14') - new Date()) / (1000 * 60 * 60 * 24)));
+    const launchDate = new Date('2025-10-14');
+    const now = new Date();
+    const isPostLaunch = now > launchDate;
     
     const greetings = ["Hey everyone!", "What's up empire builders?", "Anyone around?", "How's the vibe today?"];
-    const topics = [
+    
+    const topics = isPostLaunch ? [
+      "enjoying the live racing?",
+      "claiming those airdrops?", 
+      "sharing the empire with friends?",
+      "feeling about our growth?",
+      "ready to spread the pixel gospel?",
+      "with the community rewards?"
+    ] : [
       "with $PONY today?",
       "building the empire?", 
       "excited for launch?",
       "feeling about the vision?",
       "ready for pixel racing domination?"
     ];
+    
     const timeContexts = {
       morning: "Morning builders! ",
       afternoon: "Afternoon empire! ",
@@ -464,9 +688,25 @@ Generate ONLY the message text, no quotes or explanations.`;
     const greeting = greetings[Math.floor(Math.random() * greetings.length)];
     const topic = topics[Math.floor(Math.random() * topics.length)];
     const timePrefix = Math.random() < 0.5 ? timeContexts[timeOfDay] : "";
-    const launchSuffix = daysUntilLaunch <= 7 ? ` ${daysUntilLaunch} days to go! 🏁` : " 🐎";
     
-    return `${timePrefix}${greeting} How's everyone ${topic}${launchSuffix}`;
+    let suffix = " 🐎";
+    if (isPostLaunch) {
+      const promotionMessages = [
+        " Racing is LIVE! 🏁",
+        " Airdrops for active members! 💰", 
+        " Invite friends = more $PONY! 🚀",
+        " Empire grows stronger daily! 👑",
+        " Pixel ponies taking over! 🐎✨"
+      ];
+      suffix = promotionMessages[Math.floor(Math.random() * promotionMessages.length)];
+    } else {
+      const daysUntilLaunch = Math.max(0, Math.ceil((launchDate - now) / (1000 * 60 * 60 * 24)));
+      if (daysUntilLaunch <= 7) {
+        suffix = ` ${daysUntilLaunch} days to go! 🏁`;
+      }
+    }
+    
+    return `${timePrefix}${greeting} How's everyone ${topic}${suffix}`;
   }
 
   async jumpInWithHype(chatId, triggerMessage) {
