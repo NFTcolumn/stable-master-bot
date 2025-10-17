@@ -221,8 +221,8 @@ Copy the contract address above to buy on any DEX or use the pump.fun link for e
 
       // If it's user-to-user conversation, maybe jump in with hype if relevant
       if (!isDirectToBot && msg.chat.type !== 'private') {
-        if (Math.random() < 0.3 && this.shouldEngageWithMessage(userMessage)) {
-          // 30% chance to jump in with relevant empire building hype
+        if (Math.random() < 0.06 && this.shouldEngageWithMessage(userMessage)) {
+          // 6% chance to jump in with relevant empire building hype
           await this.jumpInWithHype(chatId, userMessage);
         }
         return;
@@ -265,8 +265,8 @@ Copy the contract address above to buy on any DEX or use the pump.fun link for e
     const fudKeywords = ['crash', 'dump', 'down', 'regulation', 'ban', 'hack', 'bug', 'whale', 'sell', 'worried', 'scared', 'panic'];
     const isFudMessage = fudKeywords.some(keyword => userMessage.toLowerCase().includes(keyword));
     
-    if (isFudMessage && Math.random() < 0.3) {
-      // 30% chance to use dynamic FUD calming instead of LLM
+    if (isFudMessage && Math.random() < 0.06) {
+      // 6% chance to use dynamic FUD calming instead of LLM
       return this.personality.getFudCalmingResponse(userMessage, 'medium', context);
     }
     
@@ -413,10 +413,10 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
       }
     });
 
-    // Ultra active community engagement every 5 minutes
+    // Reduced community engagement every 25 minutes
     const scheduleNextEngagement = () => {
-      // Fixed interval of 5 minutes (in milliseconds)
-      const interval = 5 * 60 * 1000;
+      // Fixed interval of 25 minutes (in milliseconds)
+      const interval = 25 * 60 * 1000;
       
       setTimeout(async () => {
         if (this.activeChatIds.size > 0) {
