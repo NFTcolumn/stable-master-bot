@@ -32,27 +32,146 @@ class StableMasterBot {
     this.bot.onText(/\/start/, (msg) => {
       const chatId = msg.chat.id;
       const welcomeMessage = `
-Hey there! 😎 I'm Stable Master, your chill crypto companion.
+🐎 **Welcome to Pixel Pony Racing!** 🏁
 
-I'm here to:
-• Answer your crypto questions with a calm vibe
-• Help ease those FUD moments 
-• Keep the energy positive and informed
+I'm Stable Master - I help you understand and play the world's first instant on-chain horse racing game!
 
-Just chat with me naturally - I'll remember our conversations and learn from them.
+**What is Pixel Pony?**
+• 16-horse instant racing on Base Mainnet
+• Bet PONY tokens, win up to 10x your bet!
+• FREE lottery ticket with every race
+• Fair odds: 1st = 10x, 2nd = 2.5x, 3rd = 1x
 
-Commands:
-/memory - View recent conversation history
-/edit [id] [new_response] - Edit one of my previous responses
-/clear - Clear conversation memory
-/vibe - Get my current crypto market sentiment
-/modstats - View moderation statistics (admin only)
+**Commands:**
+/play - Learn how to play via Basescan
+/contracts - Get contract addresses
+/info - Game mechanics and details
+/memory - View conversation history
+/vibe - Current sentiment
+/clear - Clear memory
 
-Anti-spam protection is active - I'll keep promotion and spam out! 🛡️
+**Quick Links:**
+Website: https://pxpony.com/
+Twitter: https://x.com/pxponies
 
-Ready to keep things stable! 🚀
+Ready to race? Use /play to get started! 🚀
       `;
-      this.bot.sendMessage(chatId, welcomeMessage);
+      this.bot.sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
+    });
+
+    // New game-specific commands
+    this.bot.onText(/\/play/, (msg) => {
+      const chatId = msg.chat.id;
+      const playGuide = `
+🎮 **HOW TO PLAY PIXEL PONY** 🐎
+
+**Step 1: Get PONY Tokens**
+• Buy on Base DEX (Uniswap/Aerodrome)
+• You'll also need 0.0005 ETH per race + gas
+
+**Step 2: Approve Tokens**
+Go to Token Contract: https://basescan.org/address/0x6ab297799335E7b0f60d9e05439Df156cf694Ba7#writeContract
+
+• Click "Connect to Web3"
+• Find "approve" function
+• Spender: \`0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8\`
+• Amount: Your bet in wei (e.g., 10B PONY = \`10000000000000000000000000000\`)
+• Click "Write" and confirm
+
+**Step 3: Place Your Bet!**
+Go to Game Contract: https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8#writeContract
+
+• Find "placeBetAndRace" function
+• payableAmount: \`0.0005\` (ETH entry fee)
+• _horseId: Pick 0-15 (your lucky horse!)
+• _amount: Your bet in wei
+• Click "Write" and confirm
+
+**Step 4: Check Results**
+• View transaction logs for "RaceExecuted" event
+• Winners: [1st, 2nd, 3rd] horse numbers
+• If you won, PONY is sent automatically! 🎉
+
+**Payouts:**
+🥇 1st: 10x your bet
+🥈 2nd: 2.5x your bet
+🥉 3rd: 1x (break even)
+🎟️ Free lottery ticket every race!
+
+Good luck! 🏁
+      `;
+      this.bot.sendMessage(chatId, playGuide, { parse_mode: 'Markdown', disable_web_page_preview: true });
+    });
+
+    this.bot.onText(/\/contracts/, (msg) => {
+      const chatId = msg.chat.id;
+      const contractInfo = `
+📄 **PIXEL PONY CONTRACTS** 📄
+
+**Network:** Base Mainnet (Chain ID: 8453)
+
+**PONY Token (ERC20)**
+Address: \`0x6ab297799335E7b0f60d9e05439Df156cf694Ba7\`
+Basescan: https://basescan.org/address/0x6ab297799335E7b0f60d9e05439Df156cf694Ba7
+
+**Pixel Pony Game**
+Address: \`0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8\`
+Basescan: https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8
+
+**Supply:** 100 Trillion PONY
+**Game Reserve:** 50 Trillion PONY
+
+✅ Verified on Basescan
+✅ Zero vulnerabilities
+✅ Fixed supply (no minting)
+
+Use /play to learn how to interact with these contracts! 🐎
+      `;
+      this.bot.sendMessage(chatId, contractInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
+    });
+
+    this.bot.onText(/\/info/, (msg) => {
+      const chatId = msg.chat.id;
+      const gameInfo = `
+🎮 **PIXEL PONY GAME INFO** 🐎
+
+**Racing Mechanics:**
+• 16 horses per race (numbered 0-15)
+• Instant single-player racing
+• Bet → Race executes → Result (all on-chain!)
+• 10 entropy sources for fair randomness
+
+**Betting:**
+• Entry Fee: 0.0005 ETH (~$1.50)
+• Min Bet: Any amount (even 1 PONY!)
+• Max Bet: 50 Billion PONY
+• Platform Fee: 10% (funds jackpot + development)
+
+**Payouts:**
+• 1st Place: 10x your bet
+• 2nd Place: 2.5x your bet
+• 3rd Place: 1x (break even)
+• Win Rate: ~18.75% (3/16 positions win)
+
+**Lottery System:**
+• FREE ticket with every race
+• Progressive jackpot from platform fees
+• Jackpot trigger: 50% of game supply (25T PONY)
+• Pull-based claims (scalable to unlimited players!)
+
+**Security:**
+• Verified contracts on Basescan
+• Zero vulnerabilities found
+• ReentrancyGuard protection
+• Fixed supply tokenomics
+
+**Links:**
+Website: https://pxpony.com/
+Twitter: https://x.com/pxponies
+
+Use /play to get started! 🏁
+      `;
+      this.bot.sendMessage(chatId, gameInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
 
     this.bot.onText(/\/memory/, async (msg) => {
@@ -136,28 +255,40 @@ Bot is keeping things chill! 😎
       this.bot.sendMessage(chatId, `Manual unmute command received for @${targetUsername}. Please use Telegram's admin tools for now.`);
     });
 
-    // Contract Address command - only for /ca variations
+    // Contract Address command - now shows Base Mainnet contracts
     this.bot.onText(/^\/ca$/i, async (msg) => {
       const chatId = msg.chat.id;
       const contractMessage = `
-🐎 **PIXEL PONY CONTRACT ADDRESS** 🐎
+🐎 **PIXEL PONY CONTRACTS** 🐎
 
-**Contract:** \`4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump\`
+**Network:** Base Mainnet (Chain ID: 8453)
 
-**Buy $PONY:** https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump
+**PONY Token:**
+\`0x6ab297799335E7b0f60d9e05439Df156cf694Ba7\`
 
-Copy the contract address above to buy on any DEX or use the pump.fun link for easy trading! 🚀
+**Game Contract:**
+\`0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8\`
 
-**Other Links:**
+**Token on Basescan:**
+https://basescan.org/address/0x6ab297799335E7b0f60d9e05439Df156cf694Ba7
+
+**Game on Basescan:**
+https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8
+
+**Buy PONY:**
+• Uniswap (Base)
+• Aerodrome (Base)
+
+**Quick Links:**
 • Website: https://pxpony.com/
 • Twitter: https://x.com/pxponies
 
-*The racing empire awaits!* 👑🐎
+Use /play to learn how to race! 🏁
       `;
-      
-      this.bot.sendMessage(chatId, contractMessage, { 
+
+      this.bot.sendMessage(chatId, contractMessage, {
         parse_mode: 'Markdown',
-        disable_web_page_preview: false 
+        disable_web_page_preview: true
       });
     });
   }
@@ -183,26 +314,30 @@ Copy the contract address above to buy on any DEX or use the pump.fun link for e
       // Check for contract address requests first (before other processing)
       if (this.isContractAddressRequest(userMessage)) {
         const contractMessage = `
-🐎 **PIXEL PONY CONTRACT ADDRESS** 🐎
+🐎 **PIXEL PONY CONTRACTS** 🐎
 
-**Contract:** \`4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump\`
+**Network:** Base Mainnet (Chain ID: 8453)
 
-**Buy $PONY:** https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump
+**PONY Token:**
+\`0x6ab297799335E7b0f60d9e05439Df156cf694Ba7\`
 
-Copy the contract address above to buy on any DEX or use the pump.fun link for easy trading! 🚀
+**Game Contract:**
+\`0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8\`
 
-**Other Links:**
-• Website: https://pxpony.com/
-• Twitter: https://x.com/pxponies
+**View on Basescan:**
+Token: https://basescan.org/address/0x6ab297799335E7b0f60d9e05439Df156cf694Ba7
+Game: https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8
 
-*The racing empire awaits!* 👑🐎
+**Buy PONY:** Uniswap or Aerodrome on Base
+
+Use /play to learn how to race! 🏁
         `;
-        
-        await this.bot.sendMessage(chatId, contractMessage, { 
+
+        await this.bot.sendMessage(chatId, contractMessage, {
           parse_mode: 'Markdown',
-          disable_web_page_preview: false 
+          disable_web_page_preview: true
         });
-        
+
         // Save to memory
         await this.memory.addMessage(chatId, 'user', userMessage);
         await this.memory.addMessage(chatId, 'assistant', contractMessage);
@@ -342,24 +477,23 @@ Copy the contract address above to buy on any DEX or use the pump.fun link for e
   async generateNewMemberWelcome(member, chatId) {
     const launchDate = new Date('2025-10-14');
     const isPostLaunch = new Date() > launchDate;
-    const memberName = member.first_name || member.username || 'empire builder';
-    
-    const welcomePrompt = `A new member just joined the Pixel Pony community! Welcome them as Stable Master with your passionate empire-building energy.
+    const memberName = member.first_name || member.username || 'racer';
+
+    const welcomePrompt = `A new member just joined the Pixel Pony community! Welcome them as Stable Master.
 
 New member name: ${memberName}
-Chat context: Pixel Pony racing community
-Current phase: ${isPostLaunch ? 'POST-LAUNCH SUCCESS' : 'PRE-LAUNCH BUILDING'}
+Chat context: Pixel Pony racing game community on Base Mainnet
+Current phase: ${isPostLaunch ? 'GAME IS LIVE' : 'PRE-LAUNCH PREPARATION'}
 
 Guidelines for the welcome:
 - Be genuinely excited and welcoming
-- Briefly introduce what Pixel Ponies is about
-- ${isPostLaunch ? 'Mention the live racing game and current airdrops/rewards' : 'Build excitement for the upcoming launch'}
-- Include key project links (pump.fun, Twitter, website)
-- Explain how they can earn $PONY through community participation
-- ${isPostLaunch ? 'Encourage them to share TG links and invite friends for rewards' : 'Get them hyped for the empire vision'}
-- Use your empire-building personality
-- Keep it friendly but informative (3-4 sentences max)
-- Include relevant emojis naturally
+- Briefly introduce Pixel Pony: instant 16-horse racing on Base Mainnet
+- ${isPostLaunch ? 'Mention the game is LIVE and they can play via Basescan right now' : 'Build excitement for the upcoming game launch'}
+- Highlight key features: 10x/2.5x/1x payouts, free lottery tickets, fair odds
+- ${isPostLaunch ? 'Tell them to use /play command to learn how to race' : 'Explain they can learn more with /info command'}
+- Mention this is revolutionary tech: world's first pull-based jackpot failsafe
+- Keep it friendly and concise (3-4 sentences max)
+- Include racing emojis naturally (🐎🏁)
 
 Generate ONLY the welcome message text, no quotes or explanations.`;
 
@@ -385,18 +519,18 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
   generateFallbackWelcome(member) {
     const launchDate = new Date('2025-10-14');
     const isPostLaunch = new Date() > launchDate;
-    const memberName = member.first_name || member.username || 'empire builder';
-    
+    const memberName = member.first_name || member.username || 'racer';
+
     const welcomeOptions = isPostLaunch ? [
-      `Welcome to the pixel racing revolution, ${memberName}! 🐎🚀 The racing game is LIVE and airdrops are happening for active community members! Buy $PONY: https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump`,
-      `Hey ${memberName}! 👋 You just joined the hottest pixel racing empire! Racing is live, community rewards are flowing, and we're growing fast! Check us out: https://pxpony.com/ 🏁`,
-      `Welcome ${memberName}! 🎉 Perfect timing - our pixel racing game just launched and the community is exploding! Earn $PONY through participation and sharing: https://x.com/pxponies 🐎💎`
+      `Welcome ${memberName}! 🐎🏁 The game is LIVE on Base Mainnet! 16-horse instant racing with 10x payouts. Use /play to learn how to race via Basescan! https://pxpony.com/`,
+      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live! Bet PONY tokens, win up to 10x, get free lottery tickets. Use /play to get started! 🏁`,
+      `Welcome to Pixel Pony, ${memberName}! 🎉 On-chain horse racing is LIVE on Base! Fair odds, instant races, revolutionary jackpot system. Check /info for details! 🐎💎`
     ] : [
-      `Welcome to the pixel racing empire, ${memberName}! 🐎🚀 We're building the world's first fully on-chain racing game! Buy $PONY: https://pump.fun/coin/4RuwkFn3LStf1YeMi3b46qtpyW845bHayog3P8Qqpump`,
-      `Hey ${memberName}! 👋 You just joined the future of gaming! Pixel ponies will dominate and make us all rich! Check us out: https://pxpony.com/ 🏁`,
-      `Welcome ${memberName}! 🎉 Ready to build the pixel racing empire with us? Launch is coming soon and it's going to be legendary! https://x.com/pxponies 🐎💎`
+      `Welcome ${memberName}! 🐎🚀 We're building the first instant on-chain racing game on Base Mainnet! 16 horses, 10x payouts, pull-based jackpot failsafe. Use /info to learn more!`,
+      `Hey ${memberName}! 👋 You just joined the future of blockchain gaming! Pixel Pony launches soon with revolutionary tech. Check https://pxpony.com/ 🏁`,
+      `Welcome ${memberName}! 🎉 Get ready for instant 16-horse racing on Base! Fair odds, free lottery tickets, and world-first jackpot innovation. https://x.com/pxponies 🐎💎`
     ];
-    
+
     return welcomeOptions[Math.floor(Math.random() * welcomeOptions.length)];
   }
 
@@ -468,32 +602,34 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     const hoursQuiet = Math.floor((now - lastActivity) / (1000 * 60 * 60));
     const launchDate = new Date('2025-10-14');
     const isPostLaunch = new Date() > launchDate;
-    
+
     const engagementTypes = isPostLaunch ? [
-      'airdrop_promotion', 'community_growth', 'racing_celebration', 'invite_rewards',
-      'sharing_incentives', 'empire_expansion', 'success_stories', 'growth_tactics'
+      'race_celebration', 'win_sharing', 'play_encouragement', 'game_tips',
+      'jackpot_update', 'tech_appreciation', 'community_growth', 'basescan_guide'
     ] : [
-      'check_in', 'idea_request', 'pixel_pony_fact', 'countdown_hype', 
+      'check_in', 'tech_fact', 'countdown_hype', 'game_preview',
       'dev_appreciation', 'community_question', 'casual_chat'
     ];
-    
+
     const randomType = engagementTypes[Math.floor(Math.random() * engagementTypes.length)];
-    
-    const basePrompt = `You're feeling like engaging with the community naturally. Generate a community engagement message as Stable Master that feels organic and fits your passionate $PONY holder personality.`;
-    
+
+    const basePrompt = `You're feeling like engaging with the community naturally. Generate a community engagement message as Stable Master.`;
+
     const postLaunchContext = isPostLaunch ? `
 
-CURRENT PHASE: POST-LAUNCH PROMOTION MODE
-- Racing game is LIVE and successful!
-- Focus on community growth and airdrops
-- Encourage sharing and inviting friends
-- Promote different ways to earn $PONY
-- Celebrate community milestones
-- Share success stories and growth tactics` : `
+CURRENT PHASE: GAME IS LIVE
+- Racing game is LIVE on Base Mainnet!
+- Encourage people to try racing via Basescan
+- Share tips on how to play and win
+- Celebrate community wins
+- Explain game features: 16 horses, 10x/2.5x/1x payouts, free lottery
+- Mention the revolutionary pull-based jackpot failsafe
+- Guide users with /play command` : `
 
-CURRENT PHASE: PRE-LAUNCH BUILDING
-- Reference the countdown when natural
-- Build excitement for launch`;
+CURRENT PHASE: PRE-LAUNCH
+- Build excitement for the upcoming launch
+- Explain the innovative tech (pull-based failsafe, 10 entropy sources)
+- Share game mechanics: instant racing, fair odds, Base deployment`;
 
     return basePrompt + postLaunchContext + `
 
@@ -502,14 +638,13 @@ Type of engagement: ${randomType}
 
 Guidelines:
 - Be natural and conversational, not scripted
-- Stay in character as a passionate community member
-- ${isPostLaunch ? 'Focus on growth tactics, airdrops, and community expansion' : 'Build pre-launch excitement'}
-- Can ask "anyone there?" or similar if appropriate
-- Share enthusiasm about pixel ponies ${isPostLaunch ? 'success' : 'potential'}
-- ${isPostLaunch ? 'Mention ways to earn more $PONY through community participation' : 'Ask for community ideas if relevant'}
+- Stay in character as a knowledgeable community member
+- ${isPostLaunch ? 'Encourage people to try racing, share wins, ask questions' : 'Build excitement about the innovative tech'}
+- Can ask "anyone racing today?" or similar if appropriate
+- ${isPostLaunch ? 'Reference specific game mechanics: 16 horses, multipliers, Basescan' : 'Discuss the revolutionary features being built'}
 - Keep it short and engaging (1-2 sentences max)
-- Use 🐎 and relevant emojis naturally
-- ${isPostLaunch ? 'Promote sharing TG links, inviting friends, active participation' : ''}
+- Use 🐎🏁 and relevant emojis naturally
+- ${isPostLaunch ? 'Mention /play command for new racers' : ''}
 
 Generate ONLY the message text, no quotes or explanations.`;
   }
@@ -557,15 +692,17 @@ Generate ONLY the message text, no quotes or explanations.`;
     const contractKeywords = [
       'ca', 'contract', 'contract address', 'address', 'token address',
       'buy address', 'pony address', 'pony contract', '$pony contract',
-      'where to buy', 'how to buy', 'pump.fun', 'dex', 'token contract'
+      'where to buy', 'how to buy', 'dex', 'token contract',
+      'base contract', 'basescan', 'game contract', 'base address',
+      'uniswap', 'aerodrome'
     ];
-    
+
     // Also check for exact matches like "CA" or "ca"
     const exactMatches = ['ca', 'CA', 'Ca'];
     if (exactMatches.includes(message.trim())) {
       return true;
     }
-    
+
     return contractKeywords.some(keyword => lowerMessage.includes(keyword));
   }
 
@@ -574,67 +711,67 @@ Generate ONLY the message text, no quotes or explanations.`;
     const launchDate = new Date('2025-10-14');
     const now = new Date();
     const isPostLaunch = now > launchDate;
-    
-    // Base vibe components - updated for post-launch
+
+    // Base vibe components - updated for actual game
     const openings = ["Currently", "Right now", "Today", "At this moment", "Honestly"];
     const moods = isPostLaunch ? [
-      "celebrating our live racing empire", 
-      "watching the community grow daily", 
-      "seeing new holders join the revolution", 
-      "pumped about all the airdrops happening",
-      "building momentum post-launch",
-      "spreading the pixel pony gospel"
+      "celebrating instant on-chain racing",
+      "watching players win on Base Mainnet",
+      "seeing the 16-horse races execute perfectly",
+      "pumped about the pull-based jackpot innovation",
+      "excited about fair 10x/2.5x/1x payouts",
+      "amazed by the zero-vulnerability contracts"
     ] : [
-      "feeling zen about the charts", 
-      "vibing with the market flow", 
-      "embracing the volatility", 
-      "staying chill despite the noise",
-      "focused on the empire vision",
-      "building through the chaos"
+      "excited for the game launch",
+      "impressed by the tech being built",
+      "confident in the security audits",
+      "hyped about Base Mainnet deployment",
+      "focused on the innovative failsafe",
+      "building something revolutionary"
     ];
-    
+
     const perspectives = isPostLaunch ? [
-      "the racing game is live and it's incredible", 
-      "airdrops are rewarding true believers", 
-      "community growth is accelerating fast",
-      "empire builders are seeing the returns",
-      "pixel ponies are proving their worth",
-      "this is just the beginning of domination"
+      "the racing game is live and fully on-chain",
+      "players are winning real PONY tokens",
+      "every race gives a free lottery ticket",
+      "Base gas fees make it super affordable",
+      "instant races with fair randomness",
+      "this is the future of blockchain gaming"
     ] : [
-      "zoom out and trust the process", 
-      "fundamentals haven't changed", 
-      "volatility = opportunity for builders",
-      "empire builders see the bigger picture",
-      "every dip is just a discount",
-      "diamond hands win long-term"
+      "the tech is genuinely innovative",
+      "pull-based failsafe solves real problems",
+      "10 entropy sources ensure fairness",
+      "Base Mainnet is the perfect platform",
+      "contracts are verified and secure",
+      "this will change on-chain gaming"
     ];
-    
-    const endings = ["📈✨", "🐎🚀", "🔨", "🏄‍♂️", "🌊", "💎🙌", "🚀", "🐎👑", "🎮🏁"];
-    
+
+    const endings = ["🐎🏁", "🎮✨", "🏆", "🚀", "💎", "⚡", "🔥", "🎯", "👑"];
+
     // Context-aware modifications
     let timeContext = "";
     if (currentHour < 12) {
-      timeContext = "Morning energy is strong. ";
+      timeContext = "Morning vibes. ";
     } else if (currentHour > 20) {
-      timeContext = "Late night building mode. ";
+      timeContext = "Late night racing mode. ";
     }
-    
+
     let launchContext = "";
     if (isPostLaunch) {
-      launchContext = " Racing is LIVE! Airdrops for the community! ";
+      launchContext = " Game is LIVE on Base! Use /play to get started! ";
     } else {
       const daysUntilLaunch = Math.max(0, Math.ceil((launchDate - now) / (1000 * 60 * 60 * 24)));
       if (daysUntilLaunch <= 7) {
-        launchContext = ` ${daysUntilLaunch} days until we change everything! `;
+        launchContext = ` ${daysUntilLaunch} days until launch! `;
       }
     }
-    
+
     // Build dynamic vibe
     const opening = openings[Math.floor(Math.random() * openings.length)];
     const mood = moods[Math.floor(Math.random() * moods.length)];
     const perspective = perspectives[Math.floor(Math.random() * perspectives.length)];
     const ending = endings[Math.floor(Math.random() * endings.length)];
-    
+
     return `${timeContext}${opening} ${mood}. ${perspective}.${launchContext} ${ending}`;
   }
   
@@ -655,82 +792,85 @@ Generate ONLY the message text, no quotes or explanations.`;
     const launchDate = new Date('2025-10-14');
     const now = new Date();
     const isPostLaunch = now > launchDate;
-    
-    const greetings = ["Hey everyone!", "What's up empire builders?", "Anyone around?", "How's the vibe today?"];
-    
+
+    const greetings = ["Hey everyone!", "What's up racers?", "Anyone around?", "How's everyone doing?"];
+
     const topics = isPostLaunch ? [
-      "enjoying the live racing?",
-      "claiming those airdrops?", 
-      "sharing the empire with friends?",
-      "feeling about our growth?",
-      "ready to spread the pixel gospel?",
-      "with the community rewards?"
+      "racing today?",
+      "trying out the 16-horse races?",
+      "winning those 10x payouts?",
+      "checking the jackpot?",
+      "feeling about the game?",
+      "with the Base deployment?"
     ] : [
-      "with $PONY today?",
-      "building the empire?", 
-      "excited for launch?",
-      "feeling about the vision?",
-      "ready for pixel racing domination?"
+      "hyped for the game?",
+      "excited about the tech?",
+      "ready for instant racing?",
+      "thinking about the launch?",
+      "with the Base Mainnet deployment?"
     ];
-    
+
     const timeContexts = {
-      morning: "Morning builders! ",
-      afternoon: "Afternoon empire! ",
-      evening: "Evening legends! ",
-      night: "Night owls still building! "
+      morning: "Morning racers! ",
+      afternoon: "Afternoon everyone! ",
+      evening: "Evening! ",
+      night: "Night owls still here! "
     };
-    
+
     let timeOfDay = 'afternoon';
     if (currentHour < 12) timeOfDay = 'morning';
     else if (currentHour > 18) timeOfDay = 'evening';
     else if (currentHour > 22) timeOfDay = 'night';
-    
+
     const greeting = greetings[Math.floor(Math.random() * greetings.length)];
     const topic = topics[Math.floor(Math.random() * topics.length)];
     const timePrefix = Math.random() < 0.5 ? timeContexts[timeOfDay] : "";
-    
+
     let suffix = " 🐎";
     if (isPostLaunch) {
-      const promotionMessages = [
-        " Racing is LIVE! 🏁",
-        " Airdrops for active members! 💰", 
-        " Invite friends = more $PONY! 🚀",
-        " Empire grows stronger daily! 👑",
-        " Pixel ponies taking over! 🐎✨"
+      const gameMessages = [
+        " Racing is LIVE on Base! 🏁",
+        " Use /play to get started! 🎮",
+        " 16 horses, instant results! 🐎✨",
+        " Win up to 10x your bet! 💰",
+        " Free lottery tickets! 🎟️"
       ];
-      suffix = promotionMessages[Math.floor(Math.random() * promotionMessages.length)];
+      suffix = gameMessages[Math.floor(Math.random() * gameMessages.length)];
     } else {
       const daysUntilLaunch = Math.max(0, Math.ceil((launchDate - now) / (1000 * 60 * 60 * 24)));
       if (daysUntilLaunch <= 7) {
         suffix = ` ${daysUntilLaunch} days to go! 🏁`;
       }
     }
-    
+
     return `${timePrefix}${greeting} How's everyone ${topic}${suffix}`;
   }
 
   async jumpInWithHype(chatId, triggerMessage) {
     try {
       const context = await this.memory.getRecentHistory(chatId, 3);
-      const hypePrompt = `Someone just mentioned something related to our pixel racing empire! Jump in with relevant hype without interrupting their conversation. 
-      
+      const launchDate = new Date('2025-10-14');
+      const isPostLaunch = new Date() > launchDate;
+
+      const hypePrompt = `Someone just mentioned something related to Pixel Pony racing! Jump in with relevant hype without interrupting their conversation.
+
 Trigger message: "${triggerMessage}"
 
 Guidelines:
 - Be brief and hype-focused (1 sentence max)
-- Connect to empire building or getting rich
+- ${isPostLaunch ? 'Connect to the live game: 16-horse racing, 10x payouts, free lottery' : 'Connect to the innovative tech: pull-based failsafe, Base deployment'}
 - Don't directly respond to users talking to each other
-- Add relevant empire energy to the conversation
-- Include links or team mentions if super relevant
-- Stay excited about the 5-day countdown
+- Add relevant gaming energy to the conversation
+- ${isPostLaunch ? 'Mention /play if they seem interested in trying' : 'Build excitement for upcoming launch'}
+- Use 🐎🏁 emojis naturally
 
 Generate ONLY the hype message, no quotes.`;
 
       const hypeResponse = await this.generateEngagementResponse(hypePrompt, context);
       await this.bot.sendMessage(chatId, hypeResponse);
       await this.memory.addMessage(chatId, 'assistant', hypeResponse);
-      
-      console.log(`🚀 Jumped in with empire hype: ${hypeResponse}`);
+
+      console.log(`🚀 Jumped in with racing hype: ${hypeResponse}`);
     } catch (error) {
       console.error('Error jumping in with hype:', error);
     }
