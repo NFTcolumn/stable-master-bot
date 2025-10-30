@@ -422,7 +422,7 @@ Use /play to learn how to race! 🏁
       }
       
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           { role: "system", content: systemPrompt },
           ...contextMessages,
@@ -500,7 +500,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     try {
       const systemPrompt = this.personality.getSystemPrompt();
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: welcomePrompt }
@@ -658,7 +658,7 @@ Generate ONLY the message text, no quotes or explanations.`;
       }));
 
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini",
         messages: [
           { role: "system", content: systemPrompt },
           ...contextMessages,
