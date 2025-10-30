@@ -5,6 +5,7 @@ const MemoryManager = require('./memory');
 const PersonalitySystem = require('./personality');
 const HealthServer = require('./server');
 const ModerationSystem = require('./moderation');
+const RaceWatcher = require('./raceWatcher');
 
 class StableMasterBot {
   constructor() {
@@ -23,7 +24,8 @@ class StableMasterBot {
     this.setupMessageHandler();
     this.setupNewMemberGreeting();
     this.setupCommunityEngagement();
-    
+    this.setupRaceWatcher();
+
     console.log('🤖 Stable Master Bot initialized and ready to chill...');
   }
 
@@ -46,6 +48,7 @@ I'm Stable Master - I help you understand and play the world's first instant on-
 /play - Learn how to play via Basescan
 /contracts - Get contract addresses
 /info - Game mechanics and details
+/races - Check race announcement status
 /memory - View conversation history
 /vibe - Current sentiment
 /clear - Clear memory
@@ -213,6 +216,35 @@ Use /play to get started! 🏁
       const context = await this.memory.getRecentHistory(chatId, 5);
       const vibe = await this.generateDynamicVibe(context);
       this.bot.sendMessage(chatId, vibe);
+    });
+
+    this.bot.onText(/\/races/, async (msg) => {
+      const chatId = msg.chat.id;
+      if (this.raceWatcher) {
+        const status = this.raceWatcher.getStatus();
+        const statusMessage = `
+🏁 **RACE ANNOUNCEMENT STATUS** 🏁
+
+📡 Monitoring: ${status.isWatching ? '✅ Active' : '❌ Inactive'}
+📍 Contract: \`${status.contract}\`
+🌐 Network: ${status.network}
+📢 Announcing to: ${status.announcingTo} chat(s)
+
+The bot watches the Base blockchain and announces every race in real-time! 🐎
+
+Race announcements show:
+• Winner & payout multipliers
+• Player address
+• Bet amounts
+• Race results
+• Basescan link
+
+Try racing to see it in action! Use /play to learn how 🎮
+        `;
+        this.bot.sendMessage(chatId, statusMessage, { parse_mode: 'Markdown' });
+      } else {
+        this.bot.sendMessage(chatId, 'Race watcher not initialized.');
+      }
     });
 
     // Moderation commands (admin only)
@@ -875,12 +907,25 @@ Generate ONLY the hype message, no quotes.`;
       console.error('Error jumping in with hype:', error);
     }
   }
+
+  setupRaceWatcher() {
+    // Initialize race watcher with access to bot and active chats
+    this.raceWatcher = new RaceWatcher(this.bot, this.activeChatIds);
+
+    // Start watching for races
+    this.raceWatcher.start();
+
+    console.log('🏁 Race announcement system activated!');
+  }
 }
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
   console.log('Shutting down Stable Master Bot...');
   if (global.stableMasterInstance) {
+    if (global.stableMasterInstance.raceWatcher) {
+      global.stableMasterInstance.raceWatcher.stop();
+    }
     global.stableMasterInstance.healthServer.stop();
   }
   process.exit(0);
@@ -889,6 +934,9 @@ process.on('SIGINT', () => {
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down gracefully...');
   if (global.stableMasterInstance) {
+    if (global.stableMasterInstance.raceWatcher) {
+      global.stableMasterInstance.raceWatcher.stop();
+    }
     global.stableMasterInstance.healthServer.stop();
   }
   process.exit(0);
