@@ -1,6 +1,6 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
-const OpenAI = require('openai');
+const Anthropic = require('@anthropic-ai/sdk');
 const MemoryManager = require('./memory');
 const PersonalitySystem = require('./personality');
 const HealthServer = require('./server');
@@ -9,7 +9,7 @@ const ModerationSystem = require('./moderation');
 class StableMasterBot {
   constructor() {
     this.bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    this.anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     this.memory = new MemoryManager();
     this.personality = new PersonalitySystem();
     this.moderation = new ModerationSystem(this.bot);
@@ -421,20 +421,20 @@ Use /play to learn how to race! 🏁
         temperature = 0.9; // More creative for hype content
       }
       
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...contextMessages,
-          { role: "user", content: userMessage }
-        ],
+      const completion = await this.anthropic.messages.create({
+        model: "claude-3-5-haiku-20241022",
         max_tokens: 500,
         temperature: temperature,
+        system: systemPrompt,
+        messages: [
+          ...contextMessages,
+          { role: "user", content: userMessage }
+        ]
       });
 
-      return completion.choices[0].message.content;
+      return completion.content[0].text;
     } catch (error) {
-      console.error('OpenAI API error:', error);
+      console.error('Anthropic API error:', error);
       return this.generateDynamicErrorMessage();
     }
   }
@@ -499,17 +499,17 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
 
     try {
       const systemPrompt = this.personality.getSystemPrompt();
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: welcomePrompt }
-        ],
+      const completion = await this.anthropic.messages.create({
+        model: "claude-3-5-haiku-20241022",
         max_tokens: 200,
         temperature: 0.8,
+        system: systemPrompt,
+        messages: [
+          { role: "user", content: welcomePrompt }
+        ]
       });
 
-      return completion.choices[0].message.content.trim();
+      return completion.content[0].text.trim();
     } catch (error) {
       console.error('Error generating AI welcome:', error);
       return this.generateFallbackWelcome(member);
@@ -657,18 +657,18 @@ Generate ONLY the message text, no quotes or explanations.`;
         content: entry.content
       }));
 
-      const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...contextMessages,
-          { role: "user", content: prompt }
-        ],
+      const completion = await this.anthropic.messages.create({
+        model: "claude-3-5-haiku-20241022",
         max_tokens: 100,
         temperature: 0.9, // Higher temperature for more variety
+        system: systemPrompt,
+        messages: [
+          ...contextMessages,
+          { role: "user", content: prompt }
+        ]
       });
 
-      return completion.choices[0].message.content.trim();
+      return completion.content[0].text.trim();
     } catch (error) {
       console.error('Error generating engagement message:', error);
       // Dynamic fallback engagement
