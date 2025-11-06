@@ -388,8 +388,8 @@ Use /play to learn how to race! 🏁
 
       // If it's user-to-user conversation, maybe jump in with hype if relevant
       if (!isDirectToBot && msg.chat.type !== 'private') {
-        if (Math.random() < 0.06 && this.shouldEngageWithMessage(userMessage)) {
-          // 6% chance to jump in with relevant empire building hype
+        if (Math.random() < 0.001 && this.shouldEngageWithMessage(userMessage)) {
+          // 0.1% chance to jump in with relevant empire building hype (95% reduction)
           await this.jumpInWithHype(chatId, userMessage);
         }
         return;
@@ -432,8 +432,8 @@ Use /play to learn how to race! 🏁
     const fudKeywords = ['crash', 'dump', 'down', 'regulation', 'ban', 'hack', 'bug', 'whale', 'sell', 'worried', 'scared', 'panic'];
     const isFudMessage = fudKeywords.some(keyword => userMessage.toLowerCase().includes(keyword));
     
-    if (isFudMessage && Math.random() < 0.06) {
-      // 6% chance to use dynamic FUD calming instead of LLM
+    if (isFudMessage && Math.random() < 0.001) {
+      // 0.1% chance to use dynamic FUD calming instead of LLM (95% reduction)
       return this.personality.getFudCalmingResponse(userMessage, 'medium', context);
     }
     
@@ -579,10 +579,10 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
       }
     });
 
-    // Reduced community engagement every 25 minutes
+    // Very reduced community engagement every 8 hours (95% less chatty)
     const scheduleNextEngagement = () => {
-      // Fixed interval of 25 minutes (in milliseconds)
-      const interval = 25 * 60 * 1000;
+      // Fixed interval of 8 hours (in milliseconds)
+      const interval = 8 * 60 * 60 * 1000;
       
       setTimeout(async () => {
         if (this.activeChatIds.size > 0) {
