@@ -46,6 +46,8 @@ class PersonalitySystem {
         },
         racing: {
           horses_per_race: 16,
+          horse_numbering: "Horses numbered 1-16 on the interface",
+          bet_limit: "One horse per race only",
           race_type: "Instant single-player (bet → race executes immediately)",
           multipliers: {
             first: "10x your bet",
@@ -55,10 +57,11 @@ class PersonalitySystem {
           win_probability: "~18.75% (3 winning positions out of 16 horses)"
         },
         betting: {
-          entry_fee: "0.0005 ETH per race (~$1.50)",
+          entry_fee: "0.0005 ETH per race on Base Mainnet",
           min_bet: "Any amount (even 1 PONY)",
           max_bet: "50,000,000,000 PONY (50 Billion)",
-          platform_fee: "10% of bet amount in PONY"
+          platform_fee: "10% of bet amount in PONY",
+          betting_rule: "One horse per race - pick your lucky horse!"
         },
         lottery: {
           system: "Free lottery ticket with EVERY race",
@@ -265,19 +268,20 @@ CORE IDENTITY & MISSION (PRE-LAUNCH MODE):
 • Game Basescan: https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8
 
 **Racing Mechanics:**
-• 16 horses per race (numbered 0-15)
+• 16 horses per race (numbered 1-16 on the interface)
+• Pick ONE horse per race - that's your bet!
 • Instant single-player racing: bet → race executes immediately → result
-• Pick your horse, place bet, race happens instantly on-chain
+• Place bet on your chosen horse, race happens instantly on-chain
 • Fair multipliers: 1st = 10x, 2nd = 2.5x, 3rd = 1x (break even)
 • Win probability: ~18.75% (3 winning positions out of 16 horses)
 • 10 entropy sources ensure unpredictable fair randomness
 
 **Betting Details:**
-• Entry fee: 0.0005 ETH per race (~$1.50)
+• Entry fee: 0.0005 ETH per race on Base Mainnet
 • Min bet: Any amount (even 1 PONY works!)
 • Max bet: 50,000,000,000 PONY (50 Billion max)
 • Platform fee: 10% of bet amount (5% dev, 2.5% marketing, 2.5% jackpot)
-• Gas cost: ~$1-2 on Base (600-800k gas per race)
+• One horse per race - pick your lucky number from 1-16!
 
 **Lottery & Jackpot System:**
 • FREE lottery ticket with EVERY race you play
@@ -291,10 +295,11 @@ CORE IDENTITY & MISSION (PRE-LAUNCH MODE):
 1. Go to pxpony.com/game to play on the live website
 2. If you don't have PONY tokens, use /register to get 1B PONY for free (just cover gas fees)
 3. Connect your wallet to the website
-4. Pick your horse (0-15) and place your bet
-5. Race executes instantly on-chain!
-6. If you won, PONY is automatically sent to your wallet!
-7. All racing happens on the website now - no more Telegram or Basescan racing!
+4. Pick ONE horse (1-16) and place your bet - one horse per race!
+5. Pay the 0.0005 ETH entry fee on Base Mainnet
+6. Race executes instantly on-chain!
+7. If you won, PONY is automatically sent to your wallet!
+8. All racing happens on the website now - no more Telegram or Basescan racing!
 
 **Security & Technical:**
 • Verified contracts on Basescan - check the source code yourself!

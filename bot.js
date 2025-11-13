@@ -88,8 +88,9 @@ Visit: **pxpony.com/game**
 • Connect your wallet to start
 
 **Step 3: Pick Your Horse & Race!**
-• Choose your lucky horse (0-15)
-• Place your bet in PONY tokens
+• Choose ONE lucky horse (1-16 on the interface)
+• Place your bet in PONY tokens on that horse
+• Pay 0.0005 ETH entry fee on Base Mainnet
 • Race executes instantly on-chain!
 • Results show immediately
 
@@ -211,16 +212,18 @@ This is maximum security! 🐎💎🔐
 **The game is LIVE at pxpony.com/game!**
 
 **Racing Mechanics:**
-• 16 horses per race (numbered 0-15)
+• 16 horses per race (numbered 1-16 on interface)
+• Pick ONE horse per race - that's your bet!
 • Instant single-player racing
 • Bet → Race executes → Result (all on-chain!)
 • 10 entropy sources for fair randomness
 
 **Betting:**
-• Entry Fee: Small ETH amount for gas
+• Entry Fee: 0.0005 ETH per race on Base Mainnet
 • Min Bet: Any amount (even 1 PONY!)
 • Max Bet: 50 Billion PONY
 • Platform Fee: 10% (funds jackpot + development)
+• One horse per race - choose wisely!
 
 **Payouts:**
 • 1st Place: 10x your bet
