@@ -38,6 +38,8 @@ class StableMasterBot {
 
 I'm Stable Master - I help you understand and play the world's first instant on-chain horse racing game!
 
+**The game is LIVE at pxpony.com/game!**
+
 **What is Pixel Pony?**
 • 16-horse instant racing on Base Mainnet
 • Bet PONY tokens, win up to 10x your bet!
@@ -45,8 +47,10 @@ I'm Stable Master - I help you understand and play the world's first instant on-
 • Fair odds: 1st = 10x, 2nd = 2.5x, 3rd = 1x
 
 **Commands:**
-/play - Learn how to play via Basescan
+/play - Learn how to play on the website
+/register - Get 1B PONY free (just cover gas)
 /contracts - Get contract addresses
+/lp - Liquidity lock proof (permanently locked!)
 /info - Game mechanics and details
 /races - Check race announcement status
 /memory - View conversation history
@@ -54,10 +58,11 @@ I'm Stable Master - I help you understand and play the world's first instant on-
 /clear - Clear memory
 
 **Quick Links:**
-Website: https://pxpony.com/
-Twitter: https://x.com/pxponies
+🎮 Play: https://pxpony.com/game
+🌐 Website: https://pxpony.com/
+🐦 Twitter: https://x.com/pxponies
 
-Ready to race? Use /play to get started! 🚀
+Ready to race? Visit pxpony.com/game now! 🚀
       `;
       this.bot.sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
     });
@@ -68,32 +73,25 @@ Ready to race? Use /play to get started! 🚀
       const playGuide = `
 🎮 **HOW TO PLAY PIXEL PONY** 🐎
 
+**The game is LIVE at pxpony.com/game!**
+
 **Step 1: Get PONY Tokens**
-• Buy on Base DEX (Uniswap/Aerodrome)
-• You'll also need 0.0005 ETH per race + gas
+Don't have PONY? No problem!
+• Use /register to get 1 Billion PONY for FREE
+• You just need to cover the small gas fees
+• OR buy PONY on Base DEX (Uniswap/Aerodrome)
 
-**Step 2: Approve Tokens**
-Go to Token Contract: https://basescan.org/address/0x6ab297799335E7b0f60d9e05439Df156cf694Ba7#writeContract
+**Step 2: Go to the Website**
+Visit: **pxpony.com/game**
+• All racing happens on the website now
+• No more Telegram or Basescan racing!
+• Connect your wallet to start
 
-• Click "Connect to Web3"
-• Find "approve" function
-• Spender: \`0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8\`
-• Amount: Your bet in wei (e.g., 10B PONY = \`10000000000000000000000000000\`)
-• Click "Write" and confirm
-
-**Step 3: Place Your Bet!**
-Go to Game Contract: https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25cdBa1FC9d37d8#writeContract
-
-• Find "placeBetAndRace" function
-• payableAmount: \`0.0005\` (ETH entry fee)
-• _horseId: Pick 0-15 (your lucky horse!)
-• _amount: Your bet in wei
-• Click "Write" and confirm
-
-**Step 4: Check Results**
-• View transaction logs for "RaceExecuted" event
-• Winners: [1st, 2nd, 3rd] horse numbers
-• If you won, PONY is sent automatically! 🎉
+**Step 3: Pick Your Horse & Race!**
+• Choose your lucky horse (0-15)
+• Place your bet in PONY tokens
+• Race executes instantly on-chain!
+• Results show immediately
 
 **Payouts:**
 🥇 1st: 10x your bet
@@ -101,9 +99,41 @@ Go to Game Contract: https://basescan.org/address/0x2B4652Bd6149E407E3F57190E25c
 🥉 3rd: 1x (break even)
 🎟️ Free lottery ticket every race!
 
+**Ready to race?**
+👉 pxpony.com/game
+👉 Use /register if you need PONY!
+
 Good luck! 🏁
       `;
       this.bot.sendMessage(chatId, playGuide, { parse_mode: 'Markdown', disable_web_page_preview: true });
+    });
+
+    this.bot.onText(/\/register/, (msg) => {
+      const chatId = msg.chat.id;
+      const registerInfo = `
+🎁 **GET FREE PONY TOKENS!** 🐎
+
+**Good news!** You can get 1 Billion PONY tokens completely FREE!
+
+**How it works:**
+1. Visit **pxpony.com/game**
+2. Connect your wallet
+3. Look for the "Register" or "Get Free PONY" button
+4. You'll receive 1B PONY tokens
+5. You only need to cover the small gas fees!
+
+**Then you can:**
+• Start racing immediately
+• Win up to 10x your bet
+• Get free lottery tickets with every race
+• No need to buy PONY on a DEX!
+
+**Ready to get started?**
+👉 Visit pxpony.com/game and register now!
+
+After you get your PONY, use /play to learn how to race! 🏁
+      `;
+      this.bot.sendMessage(chatId, registerInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
 
     this.bot.onText(/\/contracts/, (msg) => {
@@ -133,10 +163,52 @@ Use /play to learn how to interact with these contracts! 🐎
       this.bot.sendMessage(chatId, contractInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
 
+    this.bot.onText(/\/lp|\/liquidity/, (msg) => {
+      const chatId = msg.chat.id;
+      const lpInfo = `
+🔒 **LIQUIDITY PERMANENTLY LOCKED!** 🔒
+
+**Your LP Positions Are LOCKED FOREVER!**
+
+**Pony Vault V1:**
+\`0x149C79Eb6384CD54fb0F34358A7C65CDAe8Fb9D1\`
+
+**Locked NFTs:**
+• Uniswap V4 Position #474312
+• Uniswap V4 Position #474147
+
+**Proof:**
+🔒 Vault owns both NFTs:
+https://basescan.org/address/0x149C79Eb6384CD54fb0F34358A7C65CDAe8Fb9D1
+
+✅ Verified source code:
+https://basescan.org/address/0x149C79Eb6384CD54fb0F34358A7C65CDAe8Fb9D1#code
+
+🚫 Ownership renounced: Owner = 0x000...000
+
+💯 No withdrawal functions exist
+
+🔐 Renounce transaction:
+https://basescan.org/tx/0x3fd645c1cda4b43ef04a5e7abf1d6359b7afa58f1e0e6d1607d063d947d15760
+
+**What This Means:**
+• ZERO rug pull risk
+• Liquidity locked forever and ever
+• Vault ownership renounced to zero address
+• No one can withdraw the LP positions
+• Verified immutable contract code
+
+This is maximum security! 🐎💎🔐
+      `;
+      this.bot.sendMessage(chatId, lpInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
+    });
+
     this.bot.onText(/\/info/, (msg) => {
       const chatId = msg.chat.id;
       const gameInfo = `
 🎮 **PIXEL PONY GAME INFO** 🐎
+
+**The game is LIVE at pxpony.com/game!**
 
 **Racing Mechanics:**
 • 16 horses per race (numbered 0-15)
@@ -145,7 +217,7 @@ Use /play to learn how to interact with these contracts! 🐎
 • 10 entropy sources for fair randomness
 
 **Betting:**
-• Entry Fee: 0.0005 ETH (~$1.50)
+• Entry Fee: Small ETH amount for gas
 • Min Bet: Any amount (even 1 PONY!)
 • Max Bet: 50 Billion PONY
 • Platform Fee: 10% (funds jackpot + development)
@@ -169,10 +241,11 @@ Use /play to learn how to interact with these contracts! 🐎
 • Fixed supply tokenomics
 
 **Links:**
-Website: https://pxpony.com/
-Twitter: https://x.com/pxponies
+🎮 Play: https://pxpony.com/game
+🌐 Website: https://pxpony.com/
+🐦 Twitter: https://x.com/pxponies
 
-Use /play to get started! 🏁
+Use /play to learn how or /register for free PONY! 🏁
       `;
       this.bot.sendMessage(chatId, gameInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
@@ -520,9 +593,9 @@ Current phase: ${isPostLaunch ? 'GAME IS LIVE' : 'PRE-LAUNCH PREPARATION'}
 Guidelines for the welcome:
 - Be genuinely excited and welcoming
 - Briefly introduce Pixel Pony: instant 16-horse racing on Base Mainnet
-- ${isPostLaunch ? 'Mention the game is LIVE and they can play via Basescan right now' : 'Build excitement for the upcoming game launch'}
+- ${isPostLaunch ? 'Mention the game is LIVE at pxpony.com/game and they can play right now' : 'Build excitement for the upcoming game launch'}
 - Highlight key features: 10x/2.5x/1x payouts, free lottery tickets, fair odds
-- ${isPostLaunch ? 'Tell them to use /play command to learn how to race' : 'Explain they can learn more with /info command'}
+- ${isPostLaunch ? 'Tell them to visit pxpony.com/game and use /register if they need PONY' : 'Explain they can learn more with /info command'}
 - Mention this is revolutionary tech: world's first pull-based jackpot failsafe
 - Keep it friendly and concise (3-4 sentences max)
 - Include racing emojis naturally (🐎🏁)
@@ -554,9 +627,9 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     const memberName = member.first_name || member.username || 'racer';
 
     const welcomeOptions = isPostLaunch ? [
-      `Welcome ${memberName}! 🐎🏁 The game is LIVE on Base Mainnet! 16-horse instant racing with 10x payouts. Use /play to learn how to race via Basescan! https://pxpony.com/`,
-      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live! Bet PONY tokens, win up to 10x, get free lottery tickets. Use /play to get started! 🏁`,
-      `Welcome to Pixel Pony, ${memberName}! 🎉 On-chain horse racing is LIVE on Base! Fair odds, instant races, revolutionary jackpot system. Check /info for details! 🐎💎`
+      `Welcome ${memberName}! 🐎🏁 The game is LIVE at pxpony.com/game! 16-horse instant racing with 10x payouts. Visit pxpony.com/game to play now! Use /register if you need PONY! 🎮`,
+      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live at pxpony.com/game! Win up to 10x, get free lottery tickets. Use /register to get 1B PONY free! 🏁`,
+      `Welcome to Pixel Pony, ${memberName}! 🎉 On-chain horse racing is LIVE at pxpony.com/game! Fair odds, instant races, revolutionary tech. Visit pxpony.com/game and use /register! 🐎💎`
     ] : [
       `Welcome ${memberName}! 🐎🚀 We're building the first instant on-chain racing game on Base Mainnet! 16 horses, 10x payouts, pull-based jackpot failsafe. Use /info to learn more!`,
       `Hey ${memberName}! 👋 You just joined the future of blockchain gaming! Pixel Pony launches soon with revolutionary tech. Check https://pxpony.com/ 🏁`,
@@ -650,13 +723,14 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     const postLaunchContext = isPostLaunch ? `
 
 CURRENT PHASE: GAME IS LIVE
-- Racing game is LIVE on Base Mainnet!
-- Encourage people to try racing via Basescan
+- Racing game is LIVE at pxpony.com/game!
+- Encourage people to try racing on the website
+- Tell users without PONY to use /register for 1B free PONY
 - Share tips on how to play and win
 - Celebrate community wins
 - Explain game features: 16 horses, 10x/2.5x/1x payouts, free lottery
 - Mention the revolutionary pull-based jackpot failsafe
-- Guide users with /play command` : `
+- Guide users to pxpony.com/game and /play command` : `
 
 CURRENT PHASE: PRE-LAUNCH
 - Build excitement for the upcoming launch
@@ -671,12 +745,12 @@ Type of engagement: ${randomType}
 Guidelines:
 - Be natural and conversational, not scripted
 - Stay in character as a knowledgeable community member
-- ${isPostLaunch ? 'Encourage people to try racing, share wins, ask questions' : 'Build excitement about the innovative tech'}
+- ${isPostLaunch ? 'Encourage people to try racing at pxpony.com/game, share wins, ask questions' : 'Build excitement about the innovative tech'}
 - Can ask "anyone racing today?" or similar if appropriate
-- ${isPostLaunch ? 'Reference specific game mechanics: 16 horses, multipliers, Basescan' : 'Discuss the revolutionary features being built'}
+- ${isPostLaunch ? 'Reference the website pxpony.com/game and /register for free PONY' : 'Discuss the revolutionary features being built'}
 - Keep it short and engaging (1-2 sentences max)
 - Use 🐎🏁 and relevant emojis naturally
-- ${isPostLaunch ? 'Mention /play command for new racers' : ''}
+- ${isPostLaunch ? 'Mention pxpony.com/game and /register for new racers' : ''}
 
 Generate ONLY the message text, no quotes or explanations.`;
   }
@@ -828,12 +902,12 @@ Generate ONLY the message text, no quotes or explanations.`;
     const greetings = ["Hey everyone!", "What's up racers?", "Anyone around?", "How's everyone doing?"];
 
     const topics = isPostLaunch ? [
-      "racing today?",
+      "racing today on pxpony.com/game?",
       "trying out the 16-horse races?",
       "winning those 10x payouts?",
       "checking the jackpot?",
-      "feeling about the game?",
-      "with the Base deployment?"
+      "feeling about the game at pxpony.com?",
+      "with the website launch?"
     ] : [
       "hyped for the game?",
       "excited about the tech?",
@@ -861,11 +935,11 @@ Generate ONLY the message text, no quotes or explanations.`;
     let suffix = " 🐎";
     if (isPostLaunch) {
       const gameMessages = [
-        " Racing is LIVE on Base! 🏁",
-        " Use /play to get started! 🎮",
+        " Racing is LIVE at pxpony.com/game! 🏁",
+        " Visit pxpony.com/game to play! 🎮",
         " 16 horses, instant results! 🐎✨",
         " Win up to 10x your bet! 💰",
-        " Free lottery tickets! 🎟️"
+        " Use /register for free PONY! 🎟️"
       ];
       suffix = gameMessages[Math.floor(Math.random() * gameMessages.length)];
     } else {
@@ -890,10 +964,10 @@ Trigger message: "${triggerMessage}"
 
 Guidelines:
 - Be brief and hype-focused (1 sentence max)
-- ${isPostLaunch ? 'Connect to the live game: 16-horse racing, 10x payouts, free lottery' : 'Connect to the innovative tech: pull-based failsafe, Base deployment'}
+- ${isPostLaunch ? 'Connect to the live game at pxpony.com/game: 16-horse racing, 10x payouts, free lottery' : 'Connect to the innovative tech: pull-based failsafe, Base deployment'}
 - Don't directly respond to users talking to each other
 - Add relevant gaming energy to the conversation
-- ${isPostLaunch ? 'Mention /play if they seem interested in trying' : 'Build excitement for upcoming launch'}
+- ${isPostLaunch ? 'Mention pxpony.com/game or /register if they seem interested in trying' : 'Build excitement for upcoming launch'}
 - Use 🐎🏁 emojis naturally
 
 Generate ONLY the hype message, no quotes.`;
