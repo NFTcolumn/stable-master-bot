@@ -48,7 +48,7 @@ I'm Stable Master - I help you understand and play the world's first instant on-
 
 **Commands:**
 /play - Learn how to play on the website
-/register - Get 10B PONY free (just cover gas)
+/register - Buy PONY on Uniswap
 /contracts - Get contract addresses
 /lp - Liquidity lock proof (permanently locked!)
 /info - Game mechanics and details
@@ -77,9 +77,8 @@ Ready to race? Visit pxpony.com/game now! 🚀
 
 **Step 1: Get PONY Tokens**
 Don't have PONY? No problem!
-• Use /register to get 10 Billion PONY for FREE
-• You just need to cover the small gas fees
-• OR buy PONY on Base DEX (Uniswap/Aerodrome)
+• Use /register to buy PONY on Uniswap (airdrop exhausted)
+• OR buy directly on Base DEX (Uniswap/Aerodrome)
 
 **Step 2: Go to the Website**
 Visit: **pxpony.com/game**
@@ -102,7 +101,7 @@ Visit: **pxpony.com/game**
 
 **Ready to race?**
 👉 pxpony.com/game
-👉 Use /register if you need PONY!
+👉 Use /register to buy PONY!
 
 Good luck! 🏁
       `;
@@ -112,27 +111,26 @@ Good luck! 🏁
     this.bot.onText(/\/register/, (msg) => {
       const chatId = msg.chat.id;
       const registerInfo = `
-🎁 **GET FREE PONY TOKENS!** 🐎
+💰 **BUY PONY TOKENS** 🐎
 
-**Good news!** You can get 10 Billion PONY tokens completely FREE!
+**Airdrop Update:** We've exhausted all airdrop funds! But you can easily buy PONY on Uniswap.
 
-**How it works:**
-1. Visit **pxpony.com/game**
-2. Connect your wallet
-3. Look for the "Register" or "Get Free PONY" button
-4. You'll receive 10B PONY tokens
-5. You only need to cover the small gas fees!
+**How to buy:**
+1. Click here to buy on Uniswap:
+👉 https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
 
-**Then you can:**
-• Start racing immediately
-• Win up to 10x your bet
+2. Connect your wallet (must be on Base network)
+3. Swap ETH for PONY tokens
+4. Start racing immediately at pxpony.com/game!
+
+**Why buy PONY?**
+• Race and win up to 10x your bet
 • Get free lottery tickets with every race
-• No need to buy PONY on a DEX!
+• Participate in the progressive jackpot
+• Join the pixel racing revolution!
 
-**Ready to get started?**
-👉 Visit pxpony.com/game and register now!
-
-After you get your PONY, use /play to learn how to race! 🏁
+**Ready to race?**
+👉 Buy PONY now and visit pxpony.com/game! 🏁
       `;
       this.bot.sendMessage(chatId, registerInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
@@ -630,9 +628,9 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     const memberName = member.first_name || member.username || 'racer';
 
     const welcomeOptions = isPostLaunch ? [
-      `Welcome ${memberName}! 🐎🏁 The game is LIVE at pxpony.com/game! 16-horse instant racing with 10x payouts. Visit pxpony.com/game to play now! Use /register if you need PONY! 🎮`,
-      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live at pxpony.com/game! Win up to 10x, get free lottery tickets. Use /register to get 10B PONY free! 🏁`,
-      `Welcome to Pixel Pony, ${memberName}! 🎉 On-chain horse racing is LIVE at pxpony.com/game! Fair odds, instant races, revolutionary tech. Visit pxpony.com/game and use /register! 🐎💎`
+      `Welcome ${memberName}! 🐎🏁 The game is LIVE at pxpony.com/game! 16-horse instant racing with 10x payouts. Visit pxpony.com/game to play now! Use /register to buy PONY! 🎮`,
+      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live at pxpony.com/game! Win up to 10x, get free lottery tickets. Buy PONY on Uniswap with /register! 🏁`,
+      `Welcome to Pixel Pony, ${memberName}! 🎉 On-chain horse racing is LIVE at pxpony.com/game! Fair odds, instant races, revolutionary tech. Visit pxpony.com/game and buy PONY with /register! 🐎💎`
     ] : [
       `Welcome ${memberName}! 🐎🚀 We're building the first instant on-chain racing game on Base Mainnet! 16 horses, 10x payouts, pull-based jackpot failsafe. Use /info to learn more!`,
       `Hey ${memberName}! 👋 You just joined the future of blockchain gaming! Pixel Pony launches soon with revolutionary tech. Check https://pxpony.com/ 🏁`,
@@ -728,7 +726,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
 CURRENT PHASE: GAME IS LIVE
 - Racing game is LIVE at pxpony.com/game!
 - Encourage people to try racing on the website
-- Tell users without PONY to use /register for 10B free PONY
+- IMPORTANT: Airdrop is EXHAUSTED - tell users to buy PONY on Uniswap using /register
 - Share tips on how to play and win
 - Celebrate community wins
 - Explain game features: 16 horses, 10x/2.5x/1x payouts, free lottery
