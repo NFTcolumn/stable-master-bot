@@ -48,7 +48,7 @@ I'm Stable Master - I help you understand and play the world's first instant on-
 
 **Commands:**
 /play - Learn how to play on the website
-/register - Get 1B PONY free (just cover gas)
+/register - Get 10B PONY free (just cover gas)
 /contracts - Get contract addresses
 /lp - Liquidity lock proof (permanently locked!)
 /info - Game mechanics and details
@@ -77,7 +77,7 @@ Ready to race? Visit pxpony.com/game now! 🚀
 
 **Step 1: Get PONY Tokens**
 Don't have PONY? No problem!
-• Use /register to get 1 Billion PONY for FREE
+• Use /register to get 10 Billion PONY for FREE
 • You just need to cover the small gas fees
 • OR buy PONY on Base DEX (Uniswap/Aerodrome)
 
@@ -114,13 +114,13 @@ Good luck! 🏁
       const registerInfo = `
 🎁 **GET FREE PONY TOKENS!** 🐎
 
-**Good news!** You can get 1 Billion PONY tokens completely FREE!
+**Good news!** You can get 10 Billion PONY tokens completely FREE!
 
 **How it works:**
 1. Visit **pxpony.com/game**
 2. Connect your wallet
 3. Look for the "Register" or "Get Free PONY" button
-4. You'll receive 1B PONY tokens
+4. You'll receive 10B PONY tokens
 5. You only need to cover the small gas fees!
 
 **Then you can:**
@@ -631,7 +631,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
 
     const welcomeOptions = isPostLaunch ? [
       `Welcome ${memberName}! 🐎🏁 The game is LIVE at pxpony.com/game! 16-horse instant racing with 10x payouts. Visit pxpony.com/game to play now! Use /register if you need PONY! 🎮`,
-      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live at pxpony.com/game! Win up to 10x, get free lottery tickets. Use /register to get 1B PONY free! 🏁`,
+      `Hey ${memberName}! 👋 Perfect timing - Pixel Pony racing is live at pxpony.com/game! Win up to 10x, get free lottery tickets. Use /register to get 10B PONY free! 🏁`,
       `Welcome to Pixel Pony, ${memberName}! 🎉 On-chain horse racing is LIVE at pxpony.com/game! Fair odds, instant races, revolutionary tech. Visit pxpony.com/game and use /register! 🐎💎`
     ] : [
       `Welcome ${memberName}! 🐎🚀 We're building the first instant on-chain racing game on Base Mainnet! 16 horses, 10x payouts, pull-based jackpot failsafe. Use /info to learn more!`,
@@ -728,7 +728,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
 CURRENT PHASE: GAME IS LIVE
 - Racing game is LIVE at pxpony.com/game!
 - Encourage people to try racing on the website
-- Tell users without PONY to use /register for 1B free PONY
+- Tell users without PONY to use /register for 10B free PONY
 - Share tips on how to play and win
 - Celebrate community wins
 - Explain game features: 16 horses, 10x/2.5x/1x payouts, free lottery
