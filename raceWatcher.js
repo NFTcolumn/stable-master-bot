@@ -17,13 +17,16 @@ class RaceWatcher {
     this.provider = null;
     this.gameContract = null;
     this.isWatching = false;
+    this.pollInterval = null;
+    this.lastCheckedBlock = null;
+    this.POLL_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes in milliseconds
   }
 
   async start() {
     try {
-      console.log('🏁 Starting race watcher on Base Mainnet...');
+      console.log('🏁 Starting race watcher on Base Mainnet (polling every 15 minutes)...');
 
-      // Connect to Base network
+      // Connect to Base network via HTTP (more reliable than WebSocket for polling)
       this.provider = new ethers.JsonRpcProvider(this.BASE_RPC);
 
       // Create contract instance
@@ -33,8 +36,41 @@ class RaceWatcher {
         this.provider
       );
 
-      // Listen for RaceExecuted events
-      this.gameContract.on('RaceExecuted', async (raceId, player, horseId, betAmount, won, winners, payout, event) => {
+      // Get current block to start watching from
+      this.lastCheckedBlock = await this.provider.getBlockNumber();
+      console.log(`📍 Starting from block ${this.lastCheckedBlock}`);
+
+      // Start polling loop
+      this.isWatching = true;
+      this.pollForRaces(); // Check immediately
+      this.pollInterval = setInterval(() => this.pollForRaces(), this.POLL_INTERVAL_MS);
+
+      console.log('✅ Race watcher active! Checking every 15 minutes...');
+
+    } catch (error) {
+      console.error('❌ Error starting race watcher:', error.message);
+      // Retry connection after 5 minutes
+      setTimeout(() => this.start(), 5 * 60 * 1000);
+    }
+  }
+
+  async pollForRaces() {
+    try {
+      const latestBlock = await this.provider.getBlockNumber();
+
+      // Query for RaceExecuted events since last check
+      const events = await this.gameContract.queryFilter(
+        'RaceExecuted',
+        this.lastCheckedBlock + 1,
+        latestBlock
+      );
+
+      console.log(`🔍 Checked blocks ${this.lastCheckedBlock + 1} to ${latestBlock}: Found ${events.length} races`);
+
+      // Announce each race found
+      for (const event of events) {
+        const { raceId, player, horseId, betAmount, won, winners, payout } = event.args;
+
         await this.announceRace({
           raceId: raceId.toString(),
           player: player,
@@ -43,17 +79,21 @@ class RaceWatcher {
           won: won,
           winners: winners.map(w => w.toString()),
           payout: payout.toString(),
-          txHash: event.log.transactionHash
+          txHash: event.transactionHash
         });
-      });
 
-      this.isWatching = true;
-      console.log('✅ Race watcher active! Monitoring for races...');
+        // Small delay between announcements to avoid spam
+        if (events.length > 1) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+      }
+
+      // Update last checked block
+      this.lastCheckedBlock = latestBlock;
 
     } catch (error) {
-      console.error('❌ Error starting race watcher:', error);
-      // Retry connection after 30 seconds
-      setTimeout(() => this.start(), 30000);
+      console.error('❌ Error polling for races:', error.message);
+      // Continue polling despite errors
     }
   }
 
@@ -136,11 +176,12 @@ class RaceWatcher {
   }
 
   stop() {
-    if (this.gameContract) {
-      this.gameContract.removeAllListeners('RaceExecuted');
-      this.isWatching = false;
-      console.log('🛑 Race watcher stopped');
+    if (this.pollInterval) {
+      clearInterval(this.pollInterval);
+      this.pollInterval = null;
     }
+    this.isWatching = false;
+    console.log('🛑 Race watcher stopped');
   }
 
   getStatus() {
