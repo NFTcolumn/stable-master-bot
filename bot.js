@@ -5,7 +5,7 @@ const MemoryManager = require('./memory');
 const PersonalitySystem = require('./personality');
 const HealthServer = require('./server');
 const ModerationSystem = require('./moderation');
-const RaceWatcher = require('./raceWatcher');
+// const RaceWatcher = require('./raceWatcher'); // Disabled - not needed
 
 class StableMasterBot {
   constructor() {
@@ -24,7 +24,7 @@ class StableMasterBot {
     this.setupMessageHandler();
     this.setupNewMemberGreeting();
     this.setupCommunityEngagement();
-    this.setupRaceWatcher();
+    // this.setupRaceWatcher(); // Disabled - not needed
 
     console.log('🤖 Stable Master Bot initialized and ready to chill...');
   }
@@ -295,31 +295,28 @@ Use /play to learn how or /register to get 100M PONY! 🏁
 
     this.bot.onText(/\/races/, async (msg) => {
       const chatId = msg.chat.id;
-      if (this.raceWatcher) {
-        const status = this.raceWatcher.getStatus();
-        const statusMessage = `
-🏁 **RACE ANNOUNCEMENT STATUS** 🏁
+      const racesMessage = `
+🏁 **PIXEL PONY RACING** 🐎
 
-📡 Monitoring: ${status.isWatching ? '✅ Active' : '❌ Inactive'}
-📍 Contract: \`${status.contract}\`
-🌐 Network: ${status.network}
-📢 Announcing to: ${status.announcingTo} chat(s)
+Race live at pxpony.com/game!
 
-The bot watches the Base blockchain and announces every race in real-time! 🐎
+**Game Features:**
+• 16 horses per race
+• Instant results
+• Win up to 10x your bet!
+• Free lottery ticket every race
+• Progressive jackpot
 
-Race announcements show:
-• Winner & payout multipliers
-• Player address
-• Bet amounts
-• Race results
-• Basescan link
+**How to Play:**
+1. Visit pxpony.com/game
+2. Connect your wallet (Base network)
+3. Use /register to get 100M PONY!
+4. Pick your horse and race!
 
-Try racing to see it in action! Use /play to learn how 🎮
-        `;
-        this.bot.sendMessage(chatId, statusMessage, { parse_mode: 'Markdown' });
-      } else {
-        this.bot.sendMessage(chatId, 'Race watcher not initialized.');
-      }
+**Ready to win?**
+👉 Play now at pxpony.com/game! 🏁
+      `;
+      this.bot.sendMessage(chatId, racesMessage, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
 
     // Moderation commands (admin only)
@@ -984,24 +981,24 @@ Generate ONLY the hype message, no quotes.`;
     }
   }
 
-  setupRaceWatcher() {
-    // Initialize race watcher with access to bot and active chats
-    this.raceWatcher = new RaceWatcher(this.bot, this.activeChatIds);
+  // setupRaceWatcher() {
+  //   // Initialize race watcher with access to bot and active chats
+  //   this.raceWatcher = new RaceWatcher(this.bot, this.activeChatIds);
 
-    // Start watching for races
-    this.raceWatcher.start();
+  //   // Start watching for races
+  //   this.raceWatcher.start();
 
-    console.log('🏁 Race announcement system activated!');
-  }
+  //   console.log('🏁 Race announcement system activated!');
+  // }
 }
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
   console.log('Shutting down Stable Master Bot...');
   if (global.stableMasterInstance) {
-    if (global.stableMasterInstance.raceWatcher) {
-      global.stableMasterInstance.raceWatcher.stop();
-    }
+    // if (global.stableMasterInstance.raceWatcher) {
+    //   global.stableMasterInstance.raceWatcher.stop();
+    // }
     global.stableMasterInstance.healthServer.stop();
   }
   process.exit(0);
@@ -1010,9 +1007,9 @@ process.on('SIGINT', () => {
 process.on('SIGTERM', () => {
   console.log('Received SIGTERM, shutting down gracefully...');
   if (global.stableMasterInstance) {
-    if (global.stableMasterInstance.raceWatcher) {
-      global.stableMasterInstance.raceWatcher.stop();
-    }
+    // if (global.stableMasterInstance.raceWatcher) {
+    //   global.stableMasterInstance.raceWatcher.stop();
+    // }
     global.stableMasterInstance.healthServer.stop();
   }
   process.exit(0);
