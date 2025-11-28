@@ -48,7 +48,7 @@ I'm Stable Master - I help you understand and play the world's first instant on-
 
 **Commands:**
 /play - Learn how to play on the website
-/register - Buy PONY on Uniswap
+/register - Get 100M PONY tokens!
 /contracts - Get contract addresses
 /lp - Liquidity lock proof (permanently locked!)
 /info - Game mechanics and details
@@ -111,26 +111,27 @@ Good luck! 🏁
     this.bot.onText(/\/register/, (msg) => {
       const chatId = msg.chat.id;
       const registerInfo = `
-💰 **BUY PONY TOKENS** 🐎
+🎁 **GET 100M PONY TOKENS** 🐎
 
-**Airdrop Update:** We've exhausted all airdrop funds! But you can easily buy PONY on Uniswap.
+**Congratulations! You're eligible for 100M PONY tokens!**
 
-**How to buy:**
-1. Click here to buy on Uniswap:
+**How to claim:**
+1. Visit pxpony.com/game
+2. Connect your wallet (on Base network)
+3. Complete registration to receive your 100M PONY airdrop!
+
+**Want MORE PONY?**
+Buy on Uniswap:
 👉 https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
 
-2. Connect your wallet (must be on Base network)
-3. Swap ETH for PONY tokens
-4. Start racing immediately at pxpony.com/game!
-
-**Why buy PONY?**
+**Why PONY?**
 • Race and win up to 10x your bet
 • Get free lottery tickets with every race
 • Participate in the progressive jackpot
-• Join the pixel racing revolution!
+• Share your referral link at pxpony.com/referrals and earn 5%-50% commissions!
 
 **Ready to race?**
-👉 Buy PONY now and visit pxpony.com/game! 🏁
+👉 Visit pxpony.com/game now! 🏁
       `;
       this.bot.sendMessage(chatId, registerInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
@@ -246,7 +247,7 @@ This is maximum security! 🐎💎🔐
 🌐 Website: https://pxpony.com/
 🐦 Twitter: https://x.com/pxponies
 
-Use /play to learn how or /register for free PONY! 🏁
+Use /play to learn how or /register to get 100M PONY! 🏁
       `;
       this.bot.sendMessage(chatId, gameInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
@@ -748,7 +749,7 @@ Guidelines:
 - Stay in character as a knowledgeable community member
 - ${isPostLaunch ? 'Encourage people to try racing at pxpony.com/game, share wins, ask questions' : 'Build excitement about the innovative tech'}
 - Can ask "anyone racing today?" or similar if appropriate
-- ${isPostLaunch ? 'Reference the website pxpony.com/game and /register for free PONY' : 'Discuss the revolutionary features being built'}
+- ${isPostLaunch ? 'Reference the website pxpony.com/game and /register to get 100M PONY' : 'Discuss the revolutionary features being built'}
 - Keep it short and engaging (1-2 sentences max)
 - Use 🐎🏁 and relevant emojis naturally
 - ${isPostLaunch ? 'Mention pxpony.com/game and /register for new racers' : ''}
@@ -940,7 +941,7 @@ Generate ONLY the message text, no quotes or explanations.`;
         " Visit pxpony.com/game to play! 🎮",
         " 16 horses, instant results! 🐎✨",
         " Win up to 10x your bet! 💰",
-        " Use /register for free PONY! 🎟️"
+        " Use /register to get 100M PONY! 🎟️"
       ];
       suffix = gameMessages[Math.floor(Math.random() * gameMessages.length)];
     } else {
