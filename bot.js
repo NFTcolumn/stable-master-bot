@@ -77,8 +77,8 @@ Ready to race? Visit pxpony.com/game now! 🚀
 
 **Step 1: Get PONY Tokens**
 Don't have PONY? No problem!
-• Use /register to buy PONY on Uniswap (airdrop exhausted)
-• OR buy directly on Base DEX (Uniswap/Aerodrome)
+• Use /register to get 100M PONY!
+• Want more? Buy on Uniswap: https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
 
 **Step 2: Go to the Website**
 Visit: **pxpony.com/game**
@@ -726,7 +726,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
 CURRENT PHASE: GAME IS LIVE
 - Racing game is LIVE at pxpony.com/game!
 - Encourage people to try racing on the website
-- IMPORTANT: Airdrop is EXHAUSTED - tell users to buy PONY on Uniswap using /register
+- IMPORTANT: Tell users to /register to get 100M PONY! Want more? Buy on Uniswap: https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
 - Share tips on how to play and win
 - Celebrate community wins
 - Explain game features: 16 horses, 10x/2.5x/1x payouts, free lottery
