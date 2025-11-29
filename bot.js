@@ -882,12 +882,11 @@ Generate ONLY the message text, no quotes or explanations.`;
   
   generateDynamicErrorMessage() {
     const errorTypes = [
-      "Having some connection issues with my brain right now... Give me a sec to get back online! 🔄",
-      "My neural networks are doing some maintenance. Back in a flash! ⚡",
-      "Oops, hit a little turbulence in the data stream. Mind trying that again? 🛠️",
-      "Brain.exe stopped responding for a sec there. Rebooting! 🧠💫",
-      "The empire's servers are having a moment. Give me another shot! 🏗️",
-      "Connection to the pixel dimension is a bit fuzzy right now... 🌀"
+      "Sorry bro I'm not feeling well, dev has to fix me up. 🤒",
+      "Oof, not feeling so good right now. Dev needs to check on me! 🔧",
+      "My brain's being weird rn, dev's gotta help me out. 😵",
+      "Something's off with me, dev needs to take a look. 🛠️",
+      "Not operating at 100% rn, dev has to patch me up. ⚡"
     ];
     return errorTypes[Math.floor(Math.random() * errorTypes.length)];
   }
