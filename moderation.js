@@ -19,6 +19,19 @@ class ModerationSystem {
       'www.pxpony.com'
     ];
 
+    // Regex patterns for detecting DM scams and SOL mentions
+    this.dmScamPatterns = [
+      /(?:send|dm|message|contact|text)\s+(?:me|us)/gi,
+      /reach\s+out\s+(?:to\s+)?(?:me|us)/gi,
+      /dm\s+(?:me|us|for)/gi,
+      /message\s+(?:me|us|for)/gi,
+      /send\s+(?:me|us)\s+(?:a\s+)?(?:dm|message|text)/gi,
+      /(?:first|next)\s+\d+\s+(?:people|users|members)\s+(?:to\s+)?(?:dm|message|contact)/gi,
+    ];
+
+    // Pattern for SOL mentions
+    this.solPattern = /\b(?:sol|solana)\b/gi;
+
     // Regex patterns for detecting promotion
     this.promotionPatterns = [
       // Telegram invite links
@@ -135,6 +148,22 @@ class ModerationSystem {
       return false;
     }
 
+    // Check for DM scam patterns
+    const isDmScam = this.dmScamPatterns.some(pattern =>
+      pattern.test(messageText)
+    );
+
+    if (isDmScam) {
+      await this.handleViolation(chatId, userId, username, msg, 'dm_scam');
+      return true;
+    }
+
+    // Check for SOL mentions (special handling - delete and inform about Base)
+    if (this.solPattern.test(messageText)) {
+      await this.handleSolMention(chatId, userId, username, msg);
+      return true;
+    }
+
     // Check for ANY links and verify they're on the whitelist
     const links = messageText.match(this.linkPattern);
     if (links && links.length > 0) {
@@ -193,10 +222,65 @@ class ModerationSystem {
     }
   }
 
+  async handleSolMention(chatId, userId, username, msg) {
+    try {
+      // Delete the message
+      await this.bot.deleteMessage(chatId, msg.message_id);
+
+      // Log the deleted message
+      await this.logDeletedMessage(chatId, userId, username, msg.text || msg.caption || '', 'sol_mention');
+
+      // Send informative message about Base network
+      const solMessage = `
+⚠️ Hey @${username}!
+
+Sorry, we're on **Base Mainnet**, not Solana!
+
+**$PONY Token Contract (Base):**
+\`0x6ab297799335E7b0f60d9e05439Df156cf694Ba7\`
+
+**Quick Links:**
+• Buy on Uniswap: https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
+• Basescan: https://basescan.org/address/0x6ab297799335E7b0f60d9e05439Df156cf694Ba7
+• Play the game: https://pxpony.com/game
+• Get 100M PONY free: Use /register command!
+
+We're building on Base for low fees and instant racing! 🐴🏁
+      `;
+
+      try {
+        await this.bot.sendMessage(chatId, solMessage, {
+          parse_mode: 'Markdown',
+          disable_web_page_preview: false
+        });
+      } catch (error) {
+        // Fallback without markdown if it fails
+        await this.bot.sendMessage(chatId, solMessage.replace(/[*_`]/g, ''));
+      }
+
+    } catch (error) {
+      console.error('Error handling SOL mention:', error);
+    }
+  }
+
   async issueWarning(chatId, userId, username, violationType = 'promotion') {
     let warningMessage;
 
-    if (violationType === 'unauthorized_link') {
+    if (violationType === 'dm_scam') {
+      warningMessage = `
+⚠️ **Warning** @${username}
+
+Your message was deleted for asking people to DM you.
+
+**Rules:**
+• No asking for DMs - this is a common scam tactic
+• Keep all discussions public in the chat
+• Never trust unsolicited DM requests
+• Next violation = 3 hour mute
+
+Stay safe and keep discussions public! 🛡️
+      `;
+    } else if (violationType === 'unauthorized_link') {
       warningMessage = `
 ⚠️ **Warning** @${username}
 
@@ -253,9 +337,14 @@ Stay chill and keep it relevant! 😎
         until_date: Math.floor(muteUntil.getTime() / 1000)
       });
 
-      const reasonText = violationType === 'unauthorized_link'
-        ? 'Second violation: Posting unauthorized links'
-        : 'Second violation: Promotion/spam';
+      let reasonText;
+      if (violationType === 'dm_scam') {
+        reasonText = 'Second violation: Asking people to DM (scam behavior)';
+      } else if (violationType === 'unauthorized_link') {
+        reasonText = 'Second violation: Posting unauthorized links';
+      } else {
+        reasonText = 'Second violation: Promotion/spam';
+      }
 
       const muteMessage = `
 🔇 **User Muted** @${username}
@@ -280,9 +369,14 @@ Next violation will result in a permanent ban.
     try {
       await this.bot.banChatMember(chatId, userId);
 
-      const reasonText = violationType === 'unauthorized_link'
-        ? 'Third violation: Repeatedly posting unauthorized links'
-        : 'Third violation: Continued promotion/spam';
+      let reasonText;
+      if (violationType === 'dm_scam') {
+        reasonText = 'Third violation: Repeatedly asking people to DM (confirmed scam behavior)';
+      } else if (violationType === 'unauthorized_link') {
+        reasonText = 'Third violation: Repeatedly posting unauthorized links';
+      } else {
+        reasonText = 'Third violation: Continued promotion/spam';
+      }
 
       const banMessage = `
 🚫 **User Banned** @${username}
