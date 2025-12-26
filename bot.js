@@ -36,33 +36,33 @@ class StableMasterBot {
       const welcomeMessage = `
 🐎 **Welcome to Pixel Pony Racing!** 🏁
 
-I'm Stable Master - I help you understand and play the world's first instant on-chain horse racing game!
+I'm Stable Master - I help you understand and play instant on-chain horse racing!
 
-**The game is LIVE at pxpony.com/game!**
+**The game is LIVE on 4 chains!**
+Visit pxpony.com and use the chain selector:
+• Base, Celo, BNB Chain, or Polygon
 
 **What is Pixel Pony?**
-• 16-horse instant racing on Base Mainnet
+• 16-horse instant racing on multiple blockchains
 • Bet PONY tokens, win up to 10x your bet!
 • FREE lottery ticket with every race
 • Fair odds: 1st = 10x, 2nd = 2.5x, 3rd = 1x
 
 **Commands:**
-/play - Learn how to play on the website
-/register - Get 100M PONY tokens!
-/contracts - Get contract addresses
-/lp - Liquidity lock proof (permanently locked!)
+/play - Learn how to play
+/register - Get started with PONY tokens!
+/horseguy - Learn about Horse Guy's cautionary tale
 /info - Game mechanics and details
-/races - Check race announcement status
 /memory - View conversation history
-/vibe - Current sentiment
 /clear - Clear memory
 
 **Quick Links:**
-🎮 Play: https://pxpony.com/game
 🌐 Website: https://pxpony.com/
 🐦 Twitter: https://x.com/pxponies
 
-Ready to race? Visit pxpony.com/game now! 🚀
+Ready to race? Visit pxpony.com now! 🚀
+
+_P.S. Don't be like Horse Guy. He's in Austin now. You don't want to know._
       `;
       this.bot.sendMessage(chatId, welcomeMessage, { parse_mode: 'Markdown' });
     });
@@ -73,25 +73,21 @@ Ready to race? Visit pxpony.com/game now! 🚀
       const playGuide = `
 🎮 **HOW TO PLAY PIXEL PONY** 🐎
 
-**The game is LIVE at pxpony.com/game!**
+**The game is LIVE on 4 chains!**
 
-**Step 1: Get PONY Tokens**
-Don't have PONY? No problem!
-• Use /register to get 100M PONY!
-• Want more? Buy on Uniswap: https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
+**Step 1: Visit pxpony.com**
+• Use the chain selector to pick your blockchain:
+• Base, Celo, BNB Chain, or Polygon
 
-**Step 2: Go to the Website**
-Visit: **pxpony.com/game**
-• All racing happens on the website now
-• No more Telegram or Basescan racing!
-• Connect your wallet to start
+**Step 2: Get PONY Tokens**
+Don't have PONY? Use /register to get started!
 
-**Step 3: Pick Your Horse & Race!**
+**Step 3: Connect & Play**
+• Connect your wallet
 • Choose ONE lucky horse (1-16 on the interface)
-• Place your bet in PONY tokens on that horse
-• Pay 0.0005 ETH entry fee on Base Mainnet
+• Place your bet in PONY tokens
+• Pay the small entry fee (varies by chain)
 • Race executes instantly on-chain!
-• Results show immediately
 
 **Payouts:**
 🥇 1st: 10x your bet
@@ -100,10 +96,9 @@ Visit: **pxpony.com/game**
 🎟️ Free lottery ticket every race!
 
 **Ready to race?**
-👉 pxpony.com/game
-👉 Use /register to buy PONY!
+👉 Visit pxpony.com now! 🏁
 
-Good luck! 🏁
+_Remember: Horse Guy thought he could quit anytime. Now he's in Austin doing... things. For PONY. Don't be Horse Guy._ 💀
       `;
       this.bot.sendMessage(chatId, playGuide, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
@@ -111,27 +106,30 @@ Good luck! 🏁
     this.bot.onText(/\/register/, (msg) => {
       const chatId = msg.chat.id;
       const registerInfo = `
-🎁 **GET 100M PONY TOKENS** 🐎
+🎁 **GET STARTED WITH PONY!** 🐎
 
-**Congratulations! You're eligible for 100M PONY tokens!**
+**Ready to start racing?**
 
-**How to claim:**
-1. Visit pxpony.com/game
-2. Connect your wallet (on Base network)
-3. Complete registration to receive your 100M PONY airdrop!
+**Step 1: Visit pxpony.com**
+Use the chain selector to pick your preferred blockchain:
+• Base, Celo, BNB Chain, or Polygon
 
-**Want MORE PONY?**
-Buy on Uniswap:
-👉 https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
+**Step 2: Get PONY Tokens**
+• Register on the site to get 100M PONY airdrop!
+• Or buy on DEXs for your chosen chain
 
-**Why PONY?**
-• Race and win up to 10x your bet
-• Get free lottery tickets with every race
-• Participate in the progressive jackpot
-• Share your referral link at pxpony.com/referrals and earn 5%-50% commissions!
+**Step 3: Race!**
+• Pick your horse (1-16)
+• Win up to 10x your bet
+• Free lottery ticket every race
+
+**For Marketing/Referrals:**
+Visit pxpony.com → Select your chain → Go to Referrals tab
 
 **Ready to race?**
-👉 Visit pxpony.com/game now! 🏁
+👉 Visit pxpony.com now! 🏁
+
+_Don't end up like Horse Guy... he couldn't stop racing and now he's somewhere in Austin. You know what he's doing. Don't be Horse Guy._ 😬
       `;
       this.bot.sendMessage(chatId, registerInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
     });
@@ -201,6 +199,37 @@ https://basescan.org/tx/0x3fd645c1cda4b43ef04a5e7abf1d6359b7afa58f1e0e6d1607d063
 This is maximum security! 🐎💎🔐
       `;
       this.bot.sendMessage(chatId, lpInfo, { parse_mode: 'Markdown', disable_web_page_preview: true });
+    });
+
+    this.bot.onText(/\/horseguy/, (msg) => {
+      const chatId = msg.chat.id;
+      const horseGuyStory = `
+🐴 **THE TALE OF HORSE GUY** 💀
+
+Let me tell you about Horse Guy. A cautionary tale.
+
+Horse Guy started out just like you. "Just one race," he said. "I'll stop after I win 10x," he said.
+
+But Horse Guy didn't stop.
+
+First it was his savings. Then his car. Then his house. "Just one more race," he'd whisper at 3 AM, eyes bloodshot, clicking that bet button over and over.
+
+His friends tried to help. "Horse Guy, you need to stop," they'd say. But Horse Guy couldn't hear them anymore. All he could hear was the thundering of pixel hooves and the sweet jingle of PONY tokens.
+
+Last anyone heard, Horse Guy was seen in Austin, Texas. Behind a Wendy's dumpster. Doing... things. Unspeakable things. All for more PONY tokens. Just one more race.
+
+**THE MORAL:**
+Horse Guy thought he could control it. He was wrong.
+
+Don't be Horse Guy.
+
+Race responsibly. Know your limits. And for the love of god, don't end up behind a Wendy's in Austin.
+
+🚨 **Play responsibly. This is supposed to be fun, not a lifestyle.** 🚨
+
+_Still want to play? Visit pxpony.com - but remember Horse Guy's story._ 👀
+      `;
+      this.bot.sendMessage(chatId, horseGuyStory, { parse_mode: 'Markdown' });
     });
 
     this.bot.onText(/\/info/, (msg) => {
@@ -701,55 +730,53 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
   }
 
   generateEngagementPrompt(chatId) {
-    const now = Date.now();
-    const lastActivity = this.lastActivity.get(chatId) || now;
-    const hoursQuiet = Math.floor((now - lastActivity) / (1000 * 60 * 60));
     const launchDate = new Date('2025-10-14');
     const isPostLaunch = new Date() > launchDate;
 
     const engagementTypes = isPostLaunch ? [
-      'race_celebration', 'win_sharing', 'play_encouragement', 'game_tips',
-      'jackpot_update', 'tech_appreciation', 'community_growth', 'basescan_guide'
+      'community_question', 'horse_guy_reference', 'chain_discussion',
+      'strategy_question', 'fun_poll', 'horse_guy_warning'
     ] : [
-      'check_in', 'tech_fact', 'countdown_hype', 'game_preview',
-      'dev_appreciation', 'community_question', 'casual_chat'
+      'community_question', 'game_preview', 'casual_chat'
     ];
 
     const randomType = engagementTypes[Math.floor(Math.random() * engagementTypes.length)];
 
-    const basePrompt = `You're feeling like engaging with the community naturally. Generate a community engagement message as Stable Master.`;
+    const basePrompt = `You're feeling like engaging with the community. Generate a community engagement message as Stable Master.`;
 
     const postLaunchContext = isPostLaunch ? `
 
 CURRENT PHASE: GAME IS LIVE
-- Racing game is LIVE at pxpony.com/game!
-- Encourage people to try racing on the website
-- IMPORTANT: Tell users to /register to get 100M PONY! Want more? Buy on Uniswap: https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x6ab297799335E7b0f60d9e05439Df156cf694Ba7&chain=base
-- Share tips on how to play and win
-- Celebrate community wins
-- Explain game features: 16 horses, 10x/2.5x/1x payouts, free lottery
-- Mention the revolutionary pull-based jackpot failsafe
-- Guide users to pxpony.com/game and /play command` : `
+- Game is live at pxpony.com (multi-chain: Base, Celo, BNB, Polygon)
+- ASK ENGAGING QUESTIONS like:
+  * "What's your favorite chain to play on?"
+  * "Has anyone tried racing on BNB Chain yet?"
+  * "What's your horse-picking strategy?"
+  * "Which chain has the best fees in your experience?"
+- Sometimes reference Horse Guy's cautionary tale
+- Example Horse Guy references:
+  * "Remember Horse Guy? Don't be Horse Guy."
+  * "Saw Horse Guy in Austin last week. Still doing it for PONY. Sad."
+  * "Play responsibly folks. We don't need another Horse Guy situation."
+- Keep it light, fun, and community-focused
+- NO HYPE about winnings or "to the moon" nonsense` : `
 
 CURRENT PHASE: PRE-LAUNCH
-- Build excitement for the upcoming launch
-- Explain the innovative tech (pull-based failsafe, 10 entropy sources)
-- Share game mechanics: instant racing, fair odds, Base deployment`;
+- Ask questions about what chains people prefer
+- Build community through discussion`;
 
     return basePrompt + postLaunchContext + `
 
-Context: The chat has been quiet for ${hoursQuiet} hours.
 Type of engagement: ${randomType}
 
 Guidelines:
-- Be natural and conversational, not scripted
-- Stay in character as a knowledgeable community member
-- ${isPostLaunch ? 'Encourage people to try racing at pxpony.com/game, share wins, ask questions' : 'Build excitement about the innovative tech'}
-- Can ask "anyone racing today?" or similar if appropriate
-- ${isPostLaunch ? 'Reference the website pxpony.com/game and /register to get 100M PONY' : 'Discuss the revolutionary features being built'}
-- Keep it short and engaging (1-2 sentences max)
-- Use 🐎🏁 and relevant emojis naturally
-- ${isPostLaunch ? 'Mention pxpony.com/game and /register for new racers' : ''}
+- Ask genuine community questions to spark discussion
+- Sometimes drop a Horse Guy reference (cautionary tale about addiction)
+- Be natural and conversational
+- Keep it short (1-2 sentences max)
+- Use 🐎 emoji naturally
+- AVOID telling people how dead/quiet the room is
+- FOCUS on asking questions, not making statements
 
 Generate ONLY the message text, no quotes or explanations.`;
   }
@@ -892,62 +919,36 @@ Generate ONLY the message text, no quotes or explanations.`;
   }
   
   generateDynamicFallback() {
-    const currentHour = new Date().getHours();
     const launchDate = new Date('2025-10-14');
     const now = new Date();
     const isPostLaunch = now > launchDate;
 
-    const greetings = ["Hey everyone!", "What's up racers?", "Anyone around?", "How's everyone doing?"];
-
-    const topics = isPostLaunch ? [
-      "racing today on pxpony.com/game?",
-      "trying out the 16-horse races?",
-      "winning those 10x payouts?",
-      "checking the jackpot?",
-      "feeling about the game at pxpony.com?",
-      "with the website launch?"
+    const questions = isPostLaunch ? [
+      "What's your favorite chain to play on? 🐎",
+      "Has anyone tried the game on Polygon yet?",
+      "What's everyone's horse-picking strategy? 🎯",
+      "Which chain has the best fees in your experience?",
+      "Anyone racing on Celo? How's it going?",
+      "BNB Chain or Base - which do you prefer? 🤔"
     ] : [
-      "hyped for the game?",
-      "excited about the tech?",
-      "ready for instant racing?",
-      "thinking about the launch?",
-      "with the Base Mainnet deployment?"
+      "What chain are you most excited to try? 🐎",
+      "Ready for the multi-chain launch?",
+      "Base, Celo, BNB, or Polygon - what's your pick?"
     ];
 
-    const timeContexts = {
-      morning: "Morning racers! ",
-      afternoon: "Afternoon everyone! ",
-      evening: "Evening! ",
-      night: "Night owls still here! "
-    };
+    const horseGuyReferences = [
+      "Remember Horse Guy? Don't be Horse Guy. Play responsibly. 🐎",
+      "Saw Horse Guy in Austin last week. Still doing... things. For PONY. Don't be Horse Guy. 💀",
+      "Play responsibly folks. We don't need another Horse Guy situation. 😬",
+      "Horse Guy started with 'just one race.' Now he's in Austin. Learn from his mistakes. 🚨"
+    ];
 
-    let timeOfDay = 'afternoon';
-    if (currentHour < 12) timeOfDay = 'morning';
-    else if (currentHour > 18) timeOfDay = 'evening';
-    else if (currentHour > 22) timeOfDay = 'night';
-
-    const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-    const topic = topics[Math.floor(Math.random() * topics.length)];
-    const timePrefix = Math.random() < 0.5 ? timeContexts[timeOfDay] : "";
-
-    let suffix = " 🐎";
-    if (isPostLaunch) {
-      const gameMessages = [
-        " Racing is LIVE at pxpony.com/game! 🏁",
-        " Visit pxpony.com/game to play! 🎮",
-        " 16 horses, instant results! 🐎✨",
-        " Win up to 10x your bet! 💰",
-        " Use /register to get 100M PONY! 🎟️"
-      ];
-      suffix = gameMessages[Math.floor(Math.random() * gameMessages.length)];
+    // 30% chance for Horse Guy reference, 70% for community question
+    if (Math.random() < 0.3) {
+      return horseGuyReferences[Math.floor(Math.random() * horseGuyReferences.length)];
     } else {
-      const daysUntilLaunch = Math.max(0, Math.ceil((launchDate - now) / (1000 * 60 * 60 * 24)));
-      if (daysUntilLaunch <= 7) {
-        suffix = ` ${daysUntilLaunch} days to go! 🏁`;
-      }
+      return questions[Math.floor(Math.random() * questions.length)];
     }
-
-    return `${timePrefix}${greeting} How's everyone ${topic}${suffix}`;
   }
 
   async jumpInWithHype(chatId, triggerMessage) {
