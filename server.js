@@ -2,17 +2,30 @@ const express = require('express');
 const MemoryManager = require('./memory');
 
 class HealthServer {
-  constructor(bot) {
+  constructor(bot, webhookBot = null) {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.bot = bot;
+    this.webhookBot = webhookBot; // Bot instance for webhook processing
     this.memory = new MemoryManager();
     this.startTime = new Date();
-    
+
     this.setupRoutes();
   }
 
   setupRoutes() {
+    // Enable JSON parsing for webhook
+    this.app.use(express.json());
+
+    // Webhook endpoint for Telegram updates (production mode)
+    if (this.webhookBot) {
+      this.app.post('/webhook', (req, res) => {
+        this.webhookBot.processUpdate(req.body);
+        res.sendStatus(200);
+      });
+      console.log('📬 Webhook endpoint enabled at /webhook');
+    }
+
     // Health check endpoint for Render
     this.app.get('/health', (req, res) => {
       res.json({

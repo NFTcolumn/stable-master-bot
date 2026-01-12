@@ -10,7 +10,18 @@ const RollCallManager = require('./rollCall');
 
 class StableMasterBot {
   constructor() {
-    this.bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
+    // Use webhooks in production (Render), polling for local development
+    const useWebhook = process.env.RENDER === 'true' || process.env.USE_WEBHOOK === 'true';
+
+    if (useWebhook) {
+      console.log('🌐 Using webhook mode for production...');
+      this.bot = new TelegramBot(process.env.TELEGRAM_TOKEN);
+      this.setupWebhook();
+    } else {
+      console.log('📡 Using polling mode for development...');
+      this.bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
+    }
+
     this.anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
     this.memory = new MemoryManager();
     this.personality = new PersonalitySystem();
@@ -19,7 +30,7 @@ class StableMasterBot {
     this.isProcessing = new Set(); // Prevent concurrent processing for same chat
 
     // Start health server for Render deployment
-    this.healthServer = new HealthServer(this.bot);
+    this.healthServer = new HealthServer(this.bot, useWebhook ? this.bot : null);
     this.healthServer.start();
 
     this.setupCommands();
@@ -30,6 +41,25 @@ class StableMasterBot {
     // this.setupRaceWatcher(); // Disabled - not needed
 
     console.log('🤖 Stable Master Bot initialized and ready to chill...');
+  }
+
+  setupWebhook() {
+    const webhookUrl = process.env.WEBHOOK_URL || `https://${process.env.RENDER_EXTERNAL_HOSTNAME}/webhook`;
+
+    // Delete any existing webhook first
+    this.bot.deleteWebHook()
+      .then(() => {
+        console.log('🧹 Cleared any existing webhooks');
+        // Set new webhook
+        return this.bot.setWebHook(webhookUrl);
+      })
+      .then(() => {
+        console.log(`✅ Webhook set to: ${webhookUrl}`);
+      })
+      .catch(err => {
+        console.error('❌ Error setting webhook:', err.message);
+        console.error('   Make sure RENDER_EXTERNAL_HOSTNAME is set in environment');
+      });
   }
 
   setupCommands() {
