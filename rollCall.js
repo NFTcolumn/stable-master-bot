@@ -290,6 +290,8 @@ Don't be like Horse Guy... stay active! 🏁
 
         const scheduleCheck = async () => {
             try {
+                console.log(`
+🔄 [ROLL CALL] Starting scheduled check for chat ${chatId}...`);
                 // Get next member in order who needs to be checked
                 const nextMember = await this.getNextMemberForRollCall(chatId);
 
@@ -312,15 +314,19 @@ Don't be like Horse Guy... stay active! 🏁
                     });
 
                     console.log(`📋 Roll call started for user ${nextMember.username || nextMember.user_id} in chat ${chatId}`);
+                    console.log(`   └─ Event ID: ${eventId}, Message ID: ${sentMessage.message_id}`);
+                    console.log(`   └─ Member has 24 hours to respond`);
                 } else {
                     console.log(`✅ All members have been checked in chat ${chatId}`);
+                    console.log(`   └─ No pending roll calls needed`);
                 }
 
                 // Check for expired roll calls
                 await this.checkExpiredRollCalls(chatId);
 
             } catch (error) {
-                console.error('Error in scheduled roll call check:', error);
+                console.error('❌ [ROLL CALL] Error in scheduled roll call check:', error);
+                console.error('   └─ Details:', error.message);
             }
 
             // Schedule next check
