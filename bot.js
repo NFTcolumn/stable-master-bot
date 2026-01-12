@@ -11,7 +11,11 @@ const RollCallManager = require('./rollCall');
 class StableMasterBot {
   constructor() {
     // Use webhooks in production (Render), polling for local development
-    const useWebhook = process.env.RENDER === 'true' || process.env.USE_WEBHOOK === 'true';
+    // Render automatically sets RENDER env var, check if it exists
+    const useWebhook = process.env.RENDER || process.env.USE_WEBHOOK === 'true';
+
+    console.log(`🔍 Environment check: RENDER=${process.env.RENDER}, USE_WEBHOOK=${process.env.USE_WEBHOOK}`);
+    console.log(`🔍 Using webhook mode: ${!!useWebhook}`);
 
     if (useWebhook) {
       console.log('🌐 Using webhook mode for production...');
