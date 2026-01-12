@@ -44,7 +44,19 @@ class StableMasterBot {
   }
 
   setupWebhook() {
-    const webhookUrl = process.env.WEBHOOK_URL || `https://${process.env.RENDER_EXTERNAL_HOSTNAME}/webhook`;
+    const webhookUrl = process.env.WEBHOOK_URL ||
+      (process.env.RENDER_EXTERNAL_HOSTNAME ?
+        `https://${process.env.RENDER_EXTERNAL_HOSTNAME}/webhook` :
+        null);
+
+    if (!webhookUrl) {
+      console.error('❌ No webhook URL configured!');
+      console.error('   Set either WEBHOOK_URL or RENDER_EXTERNAL_HOSTNAME in environment');
+      console.error('   Example: WEBHOOK_URL=https://your-service.onrender.com/webhook');
+      return;
+    }
+
+    console.log(`🔧 Setting webhook to: ${webhookUrl}`);
 
     // Delete any existing webhook first
     this.bot.deleteWebHook()
@@ -58,7 +70,8 @@ class StableMasterBot {
       })
       .catch(err => {
         console.error('❌ Error setting webhook:', err.message);
-        console.error('   Make sure RENDER_EXTERNAL_HOSTNAME is set in environment');
+        console.error('   Webhook URL attempted:', webhookUrl);
+        console.error('   Make sure the URL is publicly accessible');
       });
   }
 
