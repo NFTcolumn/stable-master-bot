@@ -1018,27 +1018,27 @@ Generate ONLY the hype message, no quotes.`;
       }
 
       try {
-        const inactiveMember = await this.rollCall.getInactiveMembers(chatId);
+        const nextMember = await this.rollCall.getNextMemberForRollCall(chatId);
 
-        if (!inactiveMember) {
-          return this.bot.sendMessage(chatId, "No inactive members found! Everyone's been active. 🎉");
+        if (!nextMember) {
+          return this.bot.sendMessage(chatId, "All members have been checked! Everyone's up to date. 🎉");
         }
 
-        const eventId = await this.rollCall.startRollCall(chatId, inactiveMember);
-        const message = this.rollCall.generateRollCallMessage(inactiveMember);
+        const eventId = await this.rollCall.startRollCall(chatId, nextMember);
+        const message = this.rollCall.generateRollCallMessage(nextMember);
 
         const sentMessage = await this.bot.sendMessage(chatId, message, {
           parse_mode: 'Markdown'
         });
 
-        this.rollCall.rollCallActive.set(`${chatId}_${inactiveMember.user_id}`, {
+        this.rollCall.rollCallActive.set(`${chatId}_${nextMember.user_id}`, {
           eventId,
           messageId: sentMessage.message_id,
-          userId: inactiveMember.user_id,
+          userId: nextMember.user_id,
           startTime: Date.now()
         });
 
-        console.log(`📋 Manual roll call started for user ${inactiveMember.username || inactiveMember.user_id}`);
+        console.log(`📋 Manual roll call started for user ${nextMember.username || nextMember.user_id}`);
       } catch (error) {
         console.error('Error starting roll call:', error);
         this.bot.sendMessage(chatId, "Error starting roll call. Please try again.");
