@@ -14,16 +14,32 @@ class HealthServer {
   }
 
   setupRoutes() {
-    // Enable JSON parsing for webhook
+    // Enable JSON parsing for webhook FIRST
     this.app.use(express.json());
 
+    // Debug: Log all incoming requests
+    this.app.use((req, res, next) => {
+      console.log(`📥 ${req.method} ${req.path}`);
+      next();
+    });
+
     // Webhook endpoint for Telegram updates (production mode)
+    // MUST be registered before other routes
     if (this.webhookBot) {
       this.app.post('/webhook', (req, res) => {
-        this.webhookBot.processUpdate(req.body);
-        res.sendStatus(200);
+        console.log('📨 Webhook request received');
+        try {
+          this.webhookBot.processUpdate(req.body);
+          res.sendStatus(200);
+          console.log('✅ Update processed successfully');
+        } catch (error) {
+          console.error('❌ Error processing webhook update:', error.message);
+          res.sendStatus(500);
+        }
       });
-      console.log('📬 Webhook endpoint enabled at /webhook');
+      console.log('📬 Webhook endpoint registered at POST /webhook');
+    } else {
+      console.log('⚠️  Webhook endpoint NOT enabled (polling mode)');
     }
 
     // Health check endpoint for Render
