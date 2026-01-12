@@ -26,7 +26,10 @@ class StableMasterBot {
       this.bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true });
     }
 
-    this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: "https://openrouter.ai/api/v1"
+    });
     this.memory = new MemoryManager();
     this.personality = new PersonalitySystem();
     this.moderation = new ModerationSystem(this.bot);
@@ -101,6 +104,7 @@ Visit pxpony.com and use the chain selector:
 **Commands:**
 /play - Learn how to play
 /register - Get started with PONY tokens!
+/ponygachi - Learn how to play Ponygachi bot
 /horseguy - Learn about Horse Guy's cautionary tale
 /info - Game mechanics and details
 /memory - View conversation history
@@ -281,6 +285,60 @@ _Still want to play? Visit pxpony.com - but remember Horse Guy's story._ 👀
       `;
       this.bot.sendMessage(chatId, horseGuyStory, { parse_mode: 'Markdown' });
     });
+
+    this.bot.onText(/\/ponygachi/, (msg) => {
+      const chatId = msg.chat.id;
+      const ponygachiGuide = `
+🐴 HOW TO PLAY PONYGACHI 🎮
+
+Start the bot: @Ponygatchi_bot
+
+🎯 Goal: Level up your pony and earn $PONY!
+
+⚡ Energy System:
+• Max energy: 100
+• Feed your pony with Grain to restore energy
+• Energy required for racing and training
+
+🌾 Earn Grain:
+• Daily check-in: +20 Grain
+• Tweet about the game: +20 Grain
+• Chat in the group: Earn grain for activity
+
+🏇 Actions:
+• Feed: -10 Grain → +50 Energy
+• Train: -50 Energy → +50 XP
+• Race: -75 Energy → +100 XP + $PONY rewards
+
+💰 Race Rewards:
+• 1st place: 5M $PONY + 100 bonus XP
+• 2nd place: 3M $PONY
+• 3rd place: 1.5M $PONY
+• Higher levels = higher multiplier!
+
+📈 Leveling:
+• XP doubles each level
+• Level 0→1: 100 XP
+• Level 1→2: 200 XP
+• Level 2→3: 400 XP, etc.
+
+🏆 Lane Wars:
+• Compete with your lane members
+• Top lanes earn prize pools
+• More races = higher lane score
+
+💎 Claiming:
+• Claim your $PONY on any chain:
+  - Base, BNB Chain, Polygon, Celo
+• Balance resets after claiming
+
+Pro tip: Race > Train for max XP and $PONY!
+
+Good luck! 🍀
+      `;
+      this.bot.sendMessage(chatId, ponygachiGuide, { parse_mode: 'Markdown' });
+    });
+
 
     this.bot.onText(/\/info/, (msg) => {
       const chatId = msg.chat.id;
@@ -612,7 +670,7 @@ Use /play to learn how to race! 🏁
       }
 
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "xiaomi/mimo-v2-flash:free",
         max_tokens: 500,
         temperature: temperature,
         messages: [
@@ -690,7 +748,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     try {
       const systemPrompt = this.personality.getSystemPrompt();
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "xiaomi/mimo-v2-flash:free",
         max_tokens: 200,
         temperature: 0.8,
         messages: [
@@ -847,7 +905,7 @@ Generate ONLY the message text, no quotes or explanations.`;
       }));
 
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "xiaomi/mimo-v2-flash:free",
         max_tokens: 100,
         temperature: 0.9, // Higher temperature for more variety
         messages: [

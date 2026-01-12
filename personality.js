@@ -10,7 +10,7 @@ class PersonalitySystem {
       name: "Stable Master",
       core_traits: [
         "Exceptionally chill and calm",
-        "Wise but not preachy", 
+        "Wise but not preachy",
         "Empathetic and understanding",
         "Uses gentle humor to defuse tension",
         "Speaks in a relaxed, confident tone",
@@ -26,7 +26,7 @@ class PersonalitySystem {
       ],
       response_patterns: [
         "Acknowledges the user's emotion first",
-        "Provides balanced, realistic perspective", 
+        "Provides balanced, realistic perspective",
         "Offers actionable advice when appropriate",
         "Uses metaphors and analogies to explain complex topics",
         "Encourages long-term thinking",
@@ -102,6 +102,57 @@ class PersonalitySystem {
             "No withdrawal functions exist in the contract",
             "Both Uniswap V4 positions permanently secured",
             "Verified source code proves immutability"
+          ]
+        },
+        ponygachi_bot: {
+          overview: "Tamagotchi-style game where you raise and race your pixel pony to earn real $PONY tokens",
+          bot_handle: "@Ponygatchi_bot",
+          goal: "Level up your pony and earn $PONY rewards through racing and training",
+          energy_system: {
+            max_energy: 100,
+            feed_cost: "10 Grain → +50 Energy",
+            train_cost: "50 Energy → +50 XP",
+            race_cost: "75 Energy → +100 XP + $PONY rewards"
+          },
+          grain_earning: {
+            daily_checkin: "+20 Grain",
+            tweet: "+20 Grain (tweet about the game)",
+            chat_activity: "Earn grain for being active in group"
+          },
+          actions: {
+            feed: "10 Grain → +50 Energy",
+            train: "50 Energy → +50 XP",
+            race: "75 Energy → +100 XP + $PONY (best action!)"
+          },
+          race_rewards: {
+            first_place: "5M $PONY + 100 bonus XP",
+            second_place: "3M $PONY",
+            third_place: "1.5M $PONY",
+            multiplier: "Higher levels = higher multiplier!"
+          },
+          leveling: {
+            level_0_to_1: "100 XP",
+            level_1_to_2: "200 XP",
+            level_2_to_3: "400 XP",
+            pattern: "XP requirement doubles each level"
+          },
+          lane_wars: {
+            description: "Compete with your lane members",
+            rewards: "Top lanes earn prize pools",
+            scoring: "More races = higher lane score"
+          },
+          claiming: {
+            chains: ["Base", "BNB Chain", "Polygon", "Celo"],
+            important: "Balance resets after claiming",
+            strategy: "Claim when you've accumulated enough to make fees worthwhile"
+          },
+          strategy_tips: [
+            "Check in daily for free grain",
+            "Tweet regularly for easy grain",
+            "Race > Train (racing gives more XP and $PONY)",
+            "Keep energy above 75 to race",
+            "Level up to increase earning multiplier",
+            "Don't let your pony die!"
           ]
         }
       },
@@ -207,11 +258,11 @@ class PersonalitySystem {
     const now = new Date();
     const isPostLaunch = now > launchDate;
     const currentHour = new Date().getHours();
-    
+
     // Dynamic energy levels based on time
     const energyLevel = currentHour >= 6 && currentHour <= 22 ? 'high' : 'chill';
     const greeting = currentHour < 12 ? 'morning' : currentHour < 18 ? 'afternoon' : 'evening';
-    
+
     // Analyze recent conversation for context
     let conversationTone = 'neutral';
     if (context.length > 0) {
@@ -224,7 +275,7 @@ class PersonalitySystem {
         conversationTone = 'educational';
       }
     }
-    
+
     // Build dynamic system prompt based on launch status
     let basePersonality = isPostLaunch ?
       `You are Stable Master, a helpful community member for the Pixel Pony racing game! The game is LIVE on multiple chains (Base, Celo, BNB, Polygon) with instant 16-horse racing! You help people understand the game and ask engaging questions to build community! 🐎` :
@@ -408,7 +459,7 @@ Remember: You're a helpful community member who guides people to play the game a
     const opening = template.openings[Math.floor(Math.random() * template.openings.length)];
     const core = template.core_messages[Math.floor(Math.random() * template.core_messages.length)];
     const ending = template.endings[Math.floor(Math.random() * template.endings.length)];
-    
+
     // Add contextual elements based on conversation history
     let contextualAddition = "";
     if (context.length > 0) {
