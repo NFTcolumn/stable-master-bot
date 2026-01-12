@@ -11,6 +11,7 @@ A chill crypto Telegram bot with LLM integration and conversation memory. Stable
 - 🔧 **Admin Commands**: Memory management and conversation control
 - 🛡️ **Anti-Spam Protection**: Automatically deletes promotion messages with escalating penalties
 - 🚫 **Three-Strike System**: Warning → 3hr mute → permanent ban for repeat offenders
+- 📋 **Roll Call System**: Automatically checks member activity and removes inactive users
 - 🌐 **Render Ready**: Built for easy deployment on Render with health endpoints
 
 ## Quick Setup
@@ -70,6 +71,8 @@ npm run dev
 - `/clear` - Clear conversation memory for this chat
 - `/vibe` - Get Stable Master's current market sentiment
 - `/modstats` - View moderation statistics (admin only)
+- `/rollcall` - Manually trigger a roll call for inactive members (admin only)
+- `/rollcallstats` - View roll call statistics (admin only)
 
 ## Bot Personality
 
@@ -122,6 +125,7 @@ The bot includes health endpoints for monitoring:
 | `TELEGRAM_TOKEN` | Yes | Your Telegram bot token from BotFather |
 | `OPENAI_API_KEY` | Yes | Your OpenAI API key |
 | `PORT` | No | Server port (default: 3000) |
+| `MAIN_CHAT_ID` | No | Main group chat ID for roll call system |
 | `DB_PATH` | No | SQLite database path (default: ./conversations.db) |
 | `MAX_CONTEXT_MESSAGES` | No | Context window size (default: 10) |
 | `RESPONSE_MAX_TOKENS` | No | Max response length (default: 500) |
@@ -135,10 +139,12 @@ stable-master-bot/
 ├── memory.js           # SQLite conversation storage system
 ├── personality.js      # Stable Master personality and responses
 ├── moderation.js       # Anti-spam and moderation system
+├── rollCall.js         # Roll call system for member activity tracking
 ├── server.js           # Health check server for Render
 ├── package.json        # Dependencies and scripts
 ├── .env.example        # Environment variable template
-└── README.md           # This file
+├── README.md           # This file
+└── ROLL_CALL.md        # Roll call system documentation
 ```
 
 ## Usage Tips
@@ -149,6 +155,7 @@ stable-master-bot/
 4. **FUD Calming**: The bot automatically detects and responds to crypto anxiety with calm perspective
 5. **Admin Setup**: Make the bot admin in your group to enable message deletion and user restrictions
 6. **Moderation Stats**: Use `/modstats` to monitor spam protection effectiveness
+7. **Roll Call System**: See [ROLL_CALL.md](ROLL_CALL.md) for detailed setup and usage instructions
 
 ## Contributing
 

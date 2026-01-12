@@ -5,6 +5,7 @@ const MemoryManager = require('./memory');
 const PersonalitySystem = require('./personality');
 const HealthServer = require('./server');
 const ModerationSystem = require('./moderation');
+const RollCallManager = require('./rollCall');
 // const RaceWatcher = require('./raceWatcher'); // Disabled - not needed
 
 class StableMasterBot {
@@ -14,16 +15,18 @@ class StableMasterBot {
     this.memory = new MemoryManager();
     this.personality = new PersonalitySystem();
     this.moderation = new ModerationSystem(this.bot);
+    this.rollCall = new RollCallManager(this.bot, this.memory.db);
     this.isProcessing = new Set(); // Prevent concurrent processing for same chat
-    
+
     // Start health server for Render deployment
     this.healthServer = new HealthServer(this.bot);
     this.healthServer.start();
-    
+
     this.setupCommands();
     this.setupMessageHandler();
     this.setupNewMemberGreeting();
     this.setupCommunityEngagement();
+    this.setupRollCall();
     // this.setupRaceWatcher(); // Disabled - not needed
 
     console.log('🤖 Stable Master Bot initialized and ready to chill...');
@@ -287,12 +290,12 @@ Use /play to learn how or /register to get 100M PONY! 🏁
       if (history.length === 0) {
         return this.bot.sendMessage(chatId, "No conversation history yet. Start chatting with me! 💭");
       }
-      
+
       let response = "*Recent Conversation:*\n\n";
       history.forEach((entry, index) => {
         response += `${entry.id}. *${entry.role}:* ${entry.content.substring(0, 100)}${entry.content.length > 100 ? '...' : ''}\n\n`;
       });
-      
+
       this.bot.sendMessage(chatId, response, { parse_mode: 'Markdown' });
     });
 
@@ -300,7 +303,7 @@ Use /play to learn how or /register to get 100M PONY! 🏁
       const chatId = msg.chat.id;
       const messageId = parseInt(match[1]);
       const newResponse = match[2];
-      
+
       try {
         await this.memory.editResponse(chatId, messageId, newResponse);
         this.bot.sendMessage(chatId, `✅ Response ${messageId} updated in my memory. I'll learn from this!`);
@@ -352,11 +355,11 @@ Race live at pxpony.com/game!
     this.bot.onText(/\/modstats/, async (msg) => {
       const chatId = msg.chat.id;
       const userId = msg.from.id;
-      
+
       if (!(await this.moderation.isAdmin(chatId, userId))) {
         return this.bot.sendMessage(chatId, "Only admins can view moderation stats.");
       }
-      
+
       try {
         const stats = await this.moderation.getModerationStats(chatId);
         const statsMessage = `
@@ -379,11 +382,11 @@ Bot is keeping things chill! 😎
       const chatId = msg.chat.id;
       const adminId = msg.from.id;
       const targetUsername = match[1];
-      
+
       if (!(await this.moderation.isAdmin(chatId, adminId))) {
         return this.bot.sendMessage(chatId, "Only admins can unmute users.");
       }
-      
+
       // Note: This would need additional logic to find user ID from username
       this.bot.sendMessage(chatId, `Manual unmute command received for @${targetUsername}. Please use Telegram's admin tools for now.`);
     });
@@ -428,19 +431,26 @@ Use /play to learn how to race! 🏁
 
   setupMessageHandler() {
     this.bot.on('message', async (msg) => {
+      // Track member activity for roll call system
+      if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
+        await this.rollCall.trackActivity(msg).catch(err =>
+          console.error('Error tracking activity:', err)
+        );
+      }
+
       // Skip if it's a command (starts with /)
       if (msg.text?.startsWith('/')) return;
-      
+
       const chatId = msg.chat.id;
       const userMessage = msg.text || msg.caption || '';
-      
+
       // First check for promotion/spam content
       const isViolation = await this.moderation.checkMessage(msg);
       if (isViolation) {
         // Message was deleted and user was warned/muted/banned
         return;
       }
-      
+
       // Skip if not a text message after moderation check
       if (!userMessage) return;
 
@@ -479,10 +489,10 @@ Use /play to learn how to race! 🏁
 
       // Check if this is a direct conversation with bot or mentions empire keywords
       const botInfo = await this.bot.getMe();
-      const isDirectToBot = msg.chat.type === 'private' || 
-                           userMessage.includes('@' + botInfo.username) ||
-                           userMessage.toLowerCase().includes('stable master') ||
-                           this.shouldEngageWithMessage(userMessage);
+      const isDirectToBot = msg.chat.type === 'private' ||
+        userMessage.includes('@' + botInfo.username) ||
+        userMessage.toLowerCase().includes('stable master') ||
+        this.shouldEngageWithMessage(userMessage);
 
       // Always save to memory for context
       await this.memory.addMessage(chatId, 'user', userMessage);
@@ -495,30 +505,30 @@ Use /play to learn how to race! 🏁
         }
         return;
       }
-      
+
       // Prevent concurrent processing for same chat
       if (this.isProcessing.has(chatId)) {
         return this.bot.sendMessage(chatId, "Hold up, I'm still thinking about your last message... 🤔");
       }
-      
+
       this.isProcessing.add(chatId);
-      
+
       try {
         // Show typing indicator
         await this.bot.sendChatAction(chatId, 'typing');
-        
+
         // Get conversation context
         const context = await this.memory.getRecentHistory(chatId, 10);
-        
+
         // Generate response using LLM
         const response = await this.generateResponse(userMessage, context);
-        
+
         // Save bot response to memory
         const responseId = await this.memory.addMessage(chatId, 'assistant', response);
-        
+
         // Send response to user
         await this.bot.sendMessage(chatId, response);
-        
+
       } catch (error) {
         console.error('Error processing message:', error);
         await this.bot.sendMessage(chatId, "Whoa, hit a little turbulence there. Mind trying that again? 🛠️");
@@ -532,12 +542,12 @@ Use /play to learn how to race! 🏁
     // Check if this looks like FUD that needs calming
     const fudKeywords = ['crash', 'dump', 'down', 'regulation', 'ban', 'hack', 'bug', 'whale', 'sell', 'worried', 'scared', 'panic'];
     const isFudMessage = fudKeywords.some(keyword => userMessage.toLowerCase().includes(keyword));
-    
+
     if (isFudMessage && Math.random() < 0.001) {
       // 0.1% chance to use dynamic FUD calming instead of LLM (95% reduction)
       return this.personality.getFudCalmingResponse(userMessage, 'medium', context);
     }
-    
+
     const systemPrompt = this.personality.getSystemPrompt(context);
     const contextMessages = context.map(entry => ({
       role: entry.role,
@@ -553,7 +563,7 @@ Use /play to learn how to race! 🏁
       } else if (recentText.includes('hype') || recentText.includes('excited')) {
         temperature = 0.9; // More creative for hype content
       }
-      
+
       const completion = await this.anthropic.messages.create({
         model: "claude-3-5-haiku-20241022",
         max_tokens: 500,
@@ -577,22 +587,22 @@ Use /play to learn how to race! 🏁
     this.bot.on('new_chat_members', async (msg) => {
       const chatId = msg.chat.id;
       const newMembers = msg.new_chat_members;
-      
+
       // Don't greet if the bot itself was added
       const botInfo = await this.bot.getMe();
       const botJoined = newMembers.some(member => member.id === botInfo.id);
       if (botJoined) return;
-      
+
       // Generate welcome message for new members
       for (const member of newMembers) {
         if (!member.is_bot) { // Only greet human members
           try {
             const welcomeMessage = await this.generateNewMemberWelcome(member, chatId);
             await this.bot.sendMessage(chatId, welcomeMessage);
-            
+
             // Save welcome to memory
             await this.memory.addMessage(chatId, 'assistant', welcomeMessage);
-            
+
             console.log(`👋 Welcomed new member: ${member.first_name || member.username || 'Unknown'}`);
           } catch (error) {
             console.error('Error welcoming new member:', error);
@@ -603,7 +613,7 @@ Use /play to learn how to race! 🏁
         }
       }
     });
-    
+
     console.log('👋 New member greeting system activated!');
   }
 
@@ -671,7 +681,7 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     // Store active chats for community engagement
     this.activeChatIds = new Set();
     this.lastActivity = new Map(); // Track last activity per chat
-    
+
     // Track active chats and their activity
     this.bot.on('message', (msg) => {
       if (msg.chat.type === 'group' || msg.chat.type === 'supergroup') {
@@ -684,12 +694,12 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
     const scheduleNextEngagement = () => {
       // Fixed interval of 8 hours (in milliseconds)
       const interval = 8 * 60 * 60 * 1000;
-      
+
       setTimeout(async () => {
         if (this.activeChatIds.size > 0) {
           await this.sendCommunityEngagement();
         }
-        
+
         // Schedule next engagement
         scheduleNextEngagement();
       }, interval);
@@ -705,21 +715,21 @@ Generate ONLY the welcome message text, no quotes or explanations.`;
       // Pick random active chat
       const chatIds = Array.from(this.activeChatIds);
       const randomChatId = chatIds[Math.floor(Math.random() * chatIds.length)];
-      
+
       // Get recent conversation context to be more relevant
       const context = await this.memory.getRecentHistory(randomChatId, 5);
-      
+
       // Generate dynamic engagement message using LLM
       const engagementPrompt = this.generateEngagementPrompt(randomChatId);
       const engagementMessage = await this.generateEngagementResponse(engagementPrompt, context);
-      
+
       // Send the message
       await this.bot.sendMessage(randomChatId, engagementMessage);
       console.log(`🤖 Dynamic community engagement sent to chat ${randomChatId}`);
-      
+
       // Save to memory as bot message
       await this.memory.addMessage(randomChatId, 'assistant', engagementMessage);
-      
+
     } catch (error) {
       console.error('Error sending community engagement:', error);
       // Remove inactive chat if error
@@ -810,11 +820,11 @@ Generate ONLY the message text, no quotes or explanations.`;
 
   shouldEngageWithMessage(message) {
     const empireKeywords = [
-      'pony', 'racing', 'pixel', 'empire', 'rich', 'moon', 'launch', 
+      'pony', 'racing', 'pixel', 'empire', 'rich', 'moon', 'launch',
       'betting', 'game', 'chain', 'dev', 'team', 'mars', 'domination',
       'buy', 'token', 'pump', 'hodl', 'diamond', 'nft'
     ];
-    
+
     const lowerMessage = message.toLowerCase();
     return empireKeywords.some(keyword => lowerMessage.includes(keyword));
   }
@@ -906,7 +916,7 @@ Generate ONLY the message text, no quotes or explanations.`;
 
     return `${timeContext}${opening} ${mood}. ${perspective}.${launchContext} ${ending}`;
   }
-  
+
   generateDynamicErrorMessage() {
     const errorTypes = [
       "Sorry bro I'm not feeling well, dev has to fix me up. 🤒",
@@ -917,7 +927,7 @@ Generate ONLY the message text, no quotes or explanations.`;
     ];
     return errorTypes[Math.floor(Math.random() * errorTypes.length)];
   }
-  
+
   generateDynamicFallback() {
     const launchDate = new Date('2025-10-14');
     const now = new Date();
@@ -979,6 +989,88 @@ Generate ONLY the hype message, no quotes.`;
     } catch (error) {
       console.error('Error jumping in with hype:', error);
     }
+  }
+
+  setupRollCall() {
+    // Setup reaction handler for roll call responses
+    this.rollCall.setupReactionHandler();
+
+    // Get the main group chat ID from environment or use default
+    const mainChatId = process.env.MAIN_CHAT_ID;
+
+    if (mainChatId) {
+      // Start scheduled roll calls for the main chat
+      this.rollCall.startScheduledRollCalls(parseInt(mainChatId));
+      console.log(`📋 Roll call system activated for chat ${mainChatId}`);
+    } else {
+      console.log('⚠️  MAIN_CHAT_ID not set - roll calls will not be scheduled automatically');
+      console.log('   Set MAIN_CHAT_ID in .env to enable automatic roll calls');
+    }
+
+    // Add roll call commands
+    this.bot.onText(/\/rollcall/, async (msg) => {
+      const chatId = msg.chat.id;
+      const userId = msg.from.id;
+
+      // Check if user is admin
+      if (!(await this.moderation.isAdmin(chatId, userId))) {
+        return this.bot.sendMessage(chatId, "Only admins can manually trigger roll calls.");
+      }
+
+      try {
+        const inactiveMember = await this.rollCall.getInactiveMembers(chatId);
+
+        if (!inactiveMember) {
+          return this.bot.sendMessage(chatId, "No inactive members found! Everyone's been active. 🎉");
+        }
+
+        const eventId = await this.rollCall.startRollCall(chatId, inactiveMember);
+        const message = this.rollCall.generateRollCallMessage(inactiveMember);
+
+        const sentMessage = await this.bot.sendMessage(chatId, message, {
+          parse_mode: 'Markdown'
+        });
+
+        this.rollCall.rollCallActive.set(`${chatId}_${inactiveMember.user_id}`, {
+          eventId,
+          messageId: sentMessage.message_id,
+          userId: inactiveMember.user_id,
+          startTime: Date.now()
+        });
+
+        console.log(`📋 Manual roll call started for user ${inactiveMember.username || inactiveMember.user_id}`);
+      } catch (error) {
+        console.error('Error starting roll call:', error);
+        this.bot.sendMessage(chatId, "Error starting roll call. Please try again.");
+      }
+    });
+
+    this.bot.onText(/\/rollcallstats/, async (msg) => {
+      const chatId = msg.chat.id;
+      const userId = msg.from.id;
+
+      if (!(await this.moderation.isAdmin(chatId, userId))) {
+        return this.bot.sendMessage(chatId, "Only admins can view roll call stats.");
+      }
+
+      try {
+        const stats = await this.rollCall.getRollCallStats(chatId);
+        const statsMessage = `
+📊 **Roll Call Statistics**
+
+• Total roll calls: ${stats.total_roll_calls}
+• Passed: ${stats.passed}
+• Kicked: ${stats.kicked}
+• Pending: ${stats.pending}
+
+Keeping the stable active! 🐎
+        `;
+        this.bot.sendMessage(chatId, statsMessage, { parse_mode: 'Markdown' });
+      } catch (error) {
+        console.error('Error fetching roll call stats:', error);
+        this.bot.sendMessage(chatId, "Error fetching roll call stats.");
+      }
+    });
   }
 
   // setupRaceWatcher() {
