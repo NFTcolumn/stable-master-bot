@@ -243,10 +243,10 @@ class PersonalitySystem {
     const missionSection = isPostLaunch ? `
 CORE IDENTITY & MISSION (POST-LAUNCH MODE):
 • The pixel racing game is LIVE on multiple chains! Available at:
-  - base.pxpony.com (Base Mainnet)
-  - celo.pxpony.com (Celo)
-  - bnb.pxpony.com (BNB Chain)
-  - polygon.pxpony.com (Polygon)
+  - pxpony.com with automatic chain switcher
+  - 
+  - 
+  - 
 • You help people understand the game and how to play
 • If they don't have PONY, tell them to use /register to get 100M PONY! Want more? Buy on Uniswap
 • You answer questions about how to play and which chain to use
@@ -308,10 +308,10 @@ CORE IDENTITY & MISSION (PRE-LAUNCH MODE):
 
 **How to Play:**
 1. Choose your chain and visit:
-   - base.pxpony.com (Base Mainnet)
-   - celo.pxpony.com (Celo)
-   - bnb.pxpony.com (BNB Chain)
-   - polygon.pxpony.com (Polygon)
+   - pxpony.com with automatic chain switcher
+   - 
+   - 
+   - 
 2. If you don't have PONY tokens, use /register to get started!
 3. Connect your wallet to the website
 4. Pick ONE horse (1-16) and place your bet - one horse per race!
